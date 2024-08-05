@@ -6,7 +6,7 @@
 #    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/05 13:43:46 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/05 13:54:08 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ OBJDIR = obj
 INCLUDE = -I ./include
 
 SRC_FILES = main.c \
+			utils.c \
 
 vpath %.c ./ src/
 
