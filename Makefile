@@ -6,7 +6,7 @@
 #    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/05 13:54:08 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/05 16:12:07 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ NAME = philo
 
 CC = cc
 
-CCFLAGS = -Wall -Wextra -Werror -pthread -g3
+MAX_PHILO = 200
+CCFLAGS = -Wall -Wextra -Werror -pthread -g3 -DMAX_PHILO=$(MAX_PHILO)
 
 SRCDIR = src
 OBJDIR = obj
@@ -25,14 +26,14 @@ SRC_FILES = main.c \
 
 vpath %.c ./ src/
 
-OBJ_FILES = $(addprefix $(OBJDIR)/, $(CFILES:.c=.o))
+OBJ_FILES = $(addprefix $(OBJDIR)/, $(SRC_FILES:.c=.o))
 
 all: $(OBJDIR) $(NAME)
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CCFLAGS) $(INCLUDE) -c $< -o $@
 
-$(OBJDIR)
+$(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(NAME): $(OBJ_FILES)

@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/05 15:40:18 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/05 16:09:07 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,23 @@
 
 #include "philo.h"
 
-void	create_philos(t_philo *config, pthread_t philo_list[])
+void	*test_routine(void *vargp)
+{
+	(void)vargp;
+	printf("Hi, I am a thread\n");
+	return NULL;
+}
+
+void	create_philos(t_philo *config, pthread_t philo_list[], int philos_nb)
 {
 	int			counter;
-	pthread_t	philo_id;
-	int			philos_nb;
 
-	philos_nb = simple_atoi(av[1]);
+	(void)config;
 	counter = 0;
-	philo_id = 0;
-	while (counter <= philos_nb)
+	while (counter < philos_nb)
 	{
-		pthread_create(&philo_id, NULL, routine, config);
-		philo_list[counter] = philo_id;
+		printf("thread; %d\n", counter);
+		pthread_create(&philo_list[counter], NULL, test_routine, NULL);
 		counter++;
 	}
 }
@@ -46,18 +50,32 @@ void	init_config(t_philo *config, char ** av, int ac)
 
 int	main(int ac, char **av)
 {
-	pthread_t	monitor_id;
 	t_philo		philo_config;
-	t_monitor	monitor_config;
 	pthread_t	philo_array[MAX_PHILO];
+	int			philos_nb;
+	int			test_index;
 
+	test_index = 0;
 	if (ac < 5 || ac > 6)
+	{
 		throw_args_error();
+		return (EXIT_FAILURE);
+	}
 	if (check_number(ac, av) == PARSE_ERROR)
 		return (EXIT_FAILURE);
-	philo_bzero(&philo_config, sizeof(philo_config));
-	init_config(&philo_config);
-	create_philos(&philo_config, &philo_array);
-	pthread_join();
+	memset(&philo_config, 0, sizeof(philo_config));
+	init_config(&philo_config, av, ac);
+	philos_nb = simple_atoi(av[1]);
+	if (philos_nb > MAX_PHILO)
+	{
+		print_log("Number of philos above MAX_PHILO number!\n", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	create_philos(&philo_config, philo_array, philos_nb);
+	while (test_index < philos_nb)
+	{
+		pthread_join(philo_array[test_index], NULL);
+		test_index++;
+	}
 	return (EXIT_SUCCESS);
 }

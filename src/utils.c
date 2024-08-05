@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:48 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/05 15:38:25 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/05 16:01:36 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,11 @@ void	print_log(char *str, int fd)
 	i = 0;
 	if (!str)
 		return ;
-	while (str[i++])
-		write(fd, str[i], 1);
+	while (str[i])
+	{
+		write(fd, &str[i], 1);
+		i++;
+	}
 }
 
 int	check_number(int ac, char **av)
@@ -30,13 +33,13 @@ int	check_number(int ac, char **av)
 	char	*str;
 
 	str_i = 0;
-	av_i = 0;
+	av_i = 1;
 	while (av_i < ac)
 	{
 		str = av[av_i];
 		while (str[str_i])
 		{
-			if (str[str_i] < '0' || str[str_i] > '9');
+			if (str[str_i] < '0' || str[str_i] > '9')
 			{
 				print_log("Error parsing args ", STDERR_FILENO);
 				print_log(str, STDERR_FILENO);
@@ -77,18 +80,4 @@ void	throw_args_error(void)
 	print_log(" [time_to_eat]", STDERR_FILENO);
 	print_log(" [time_to_sleep]", STDERR_FILENO);
 	print_log(" [number_of_times_to_eat] (optional)\n", STDERR_FILENO);
-}
-
-void	philo_bzero(void *s, size_t n)
-{
-	unsigned int	i;
-	unsigned char	*str;
-
-	i = 0;
-	str = s;
-	while (i < n)
-	{
-		str[i] = '\0';
-		i++;
-	}
 }
