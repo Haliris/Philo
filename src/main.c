@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/05 16:09:07 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/05 17:58:49 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ void	create_philos(t_philo *config, pthread_t philo_list[], int philos_nb)
 	counter = 0;
 	while (counter < philos_nb)
 	{
-		printf("thread; %d\n", counter);
 		pthread_create(&philo_list[counter], NULL, test_routine, NULL);
+		printf("thread: %lu\n", philo_list[counter]);
 		counter++;
 	}
 }
@@ -50,10 +50,11 @@ void	init_config(t_philo *config, char ** av, int ac)
 
 int	main(int ac, char **av)
 {
-	t_philo		philo_config;
-	pthread_t	philo_array[MAX_PHILO];
-	int			philos_nb;
-	int			test_index;
+	t_philo					philo_config;
+	pthread_t				philo_array[MAX_PHILO];
+	pthread_mutex_t			forks[MAX_PHILO];
+	int						philos_nb;
+	int						test_index;
 
 	test_index = 0;
 	if (ac < 5 || ac > 6)
@@ -69,13 +70,17 @@ int	main(int ac, char **av)
 	if (philos_nb > MAX_PHILO)
 	{
 		print_log("Number of philos above MAX_PHILO number!\n", STDERR_FILENO);
+		print_log("run 'Make MAX_PHILO=[number]'\n", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
+	if (init_mutexes(philos_nb, forks) == PANIC)
+		return (EXIT_FAILURE);
 	create_philos(&philo_config, philo_array, philos_nb);
 	while (test_index < philos_nb)
 	{
 		pthread_join(philo_array[test_index], NULL);
 		test_index++;
 	}
+	destroy_mutexes(philos_nb, forks);
 	return (EXIT_SUCCESS);
 }

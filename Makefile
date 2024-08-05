@@ -6,7 +6,7 @@
 #    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/05 16:12:07 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/05 17:54:10 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ INCLUDE = -I ./include
 
 SRC_FILES = main.c \
 			utils.c \
+			mutex_handler.c \
 
 vpath %.c ./ src/
 
