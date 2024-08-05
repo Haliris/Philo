@@ -30,7 +30,7 @@ void	create_philos(t_philo *config, pthread_t philo_list[], int philos_nb)
 			config->right_fork = 0;
 		else
 			config->right_fork = counter;
-		pthread_create(&philo_list[counter], NULL, philo_routine, NULL);
+		pthread_create(&philo_list[counter], NULL, philo_routine, NULL); //add safety here
 		counter++;
 	}
 }
