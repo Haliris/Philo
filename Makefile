@@ -6,7 +6,7 @@
 #    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/06 15:44:04 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/07 17:14:55 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,9 @@ NAME = philo
 CC = cc
 
 MAX_PHILO = 200
-CCFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=thread -g3 -DMAX_PHILO=$(MAX_PHILO)
+
+# -fsanitize=thread
+CCFLAGS = -Wall -Wextra -Werror -pthread  -g3 -DMAX_PHILO=$(MAX_PHILO)
 
 SRCDIR = src
 OBJDIR = obj

@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 15:30:19 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 17:01:19 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static void	try_to_write(t_philo  *philo, char *message)
 
 static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 {
+	if (philo->full_tummy == TRUE)
+		return ;
 	if (philo->number % 2 == 0)
 	{
 		pthread_mutex_lock(&forks[philo->left_fork]);
@@ -37,7 +39,7 @@ static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 		philo->forks_state[philo->right_fork] = LOCKED;
 		try_to_write(philo, "has taken a fork.");
 	}
-	else
+	else if (philo->number % 2 != 0)
 	{
 		pthread_mutex_lock(&forks[philo->right_fork]);
 		philo->forks_state[philo->right_fork] = LOCKED;
@@ -78,6 +80,22 @@ static int	check_stop(t_philo *philo)
 	return (FALSE);
 }
 
+void	print_variable(t_philo *philo, int time)
+{
+	pthread_mutex_lock(philo->print_stick);
+	printf("time: %d\n", time);
+	pthread_mutex_unlock(philo->print_stick);
+}
+
+static void	philo_think(t_philo *philo)
+{
+	int	time_left;
+
+	time_left = philo->death_time - (get_current_time(philo->start_time) - philo->time_since_meal) - 10;
+	try_to_write(philo, "is thinking");
+	ft_usleep(philo, (time_left - philo->time_to_eat) * 0.90, get_current_time(philo->start_time));
+}
+
 void	*philo_routine(void *arg)
 {
 	t_philo			*philo;
@@ -88,10 +106,10 @@ void	*philo_routine(void *arg)
 	philo->time_since_meal = get_current_time(philo->start_time);
 	while (1)
 	{
-		if (check_stop(philo) == TRUE)
-			return (NULL);
 		if (philo->full_tummy == TRUE)
 			continue ;
+		if (check_stop(philo) == TRUE)
+			return (NULL);
 		try_to_eat(philo, forks);
 		if (check_stop(philo) == TRUE)
 			return (NULL);
@@ -102,6 +120,6 @@ void	*philo_routine(void *arg)
 			return (NULL);
 		if (philo->full_tummy == TRUE)
 			continue ;
-		try_to_write(philo, "is thinking");
+		philo_think(philo);
 	}
 }

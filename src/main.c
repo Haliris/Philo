@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 15:32:39 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:58:16 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_phil
 	counter = 0;
 	while (counter < philos_nb)
 	{
-		philos[counter] = malloc(sizeof(t_philo));
+		philos[counter] = malloc(1 * sizeof(t_philo));
 		if (!philos[counter])
 			return (PANIC);
 		if (counter == 0)
@@ -47,6 +47,7 @@ int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_phil
 		philos[counter]->forks = config->forks;
 		philos[counter]->print_stick = &config->print_stick;
 		philos[counter]->time_to_eat = config->time_to_eat;
+		philos[counter]->death_time = config->time_to_die;
 		philos[counter]->time_to_sleep = config->time_to_sleep;
 		philos[counter]->death = &config->death;
 		philos[counter]->death_lock = &config->death_lock;
@@ -85,11 +86,19 @@ void	kill_philos(t_config *config, pthread_t philo_ids[])
 	}
 }
 
+void	print_monitor_time(t_philo philos, t_config *config, int time)
+{
+	pthread_mutex_lock(&config->print_stick);
+	printf("philo: %d monitor time: %d\n", philos.number, time);
+	pthread_mutex_unlock(&config->print_stick);
+}
+
 void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t philo_ids[])
 {
 	int	current_time;
 
 	current_time = get_current_time(config->start_time);
+	// print_monitor_time(philos, config, current_time - philos.time_since_meal);
 	if (current_time - philos.time_since_meal > config->time_to_die)
 	{
 		pthread_mutex_lock(&config->death_lock);
@@ -101,6 +110,7 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 		kill_philos(config, philo_ids);
 		pthread_mutex_unlock(&config->print_stick);
 		destroy_mutexes(config->philos_nb, config);
+		return ;
 	}
 	if (config->meals_nb != -1)
 	{
@@ -109,8 +119,12 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 	}
 	if (config->full_philos == config->philos_nb)
 	{
+		pthread_mutex_lock(&config->death_lock);
 		config->death = TRUE;
+		pthread_mutex_unlock(&config->death_lock);
 		*stop_run = TRUE;
+		kill_philos(config, philo_ids);
+		destroy_mutexes(config->philos_nb, config);
 	}
 }
 
