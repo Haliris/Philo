@@ -6,7 +6,7 @@
 #    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/07 17:14:55 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/07 17:50:27 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,13 +16,11 @@ CC = cc
 
 MAX_PHILO = 200
 
-# -fsanitize=thread
-CCFLAGS = -Wall -Wextra -Werror -pthread  -g3 -DMAX_PHILO=$(MAX_PHILO)
+CCFLAGS = -Wall -Wextra -Werror -g3 -DMAX_PHILO=$(MAX_PHILO)
 
 SRCDIR = src
 OBJDIR = obj
 INCLUDE = -I ./include
-
 SRC_FILES = main.c \
 			utils.c \
 			mutex_handler.c \

@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 17:01:19 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 17:52:39 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,13 @@ static int	check_stop(t_philo *philo)
 		pthread_mutex_unlock(philo->death_lock);
 		return (TRUE);
 	}
-	pthread_mutex_unlock(philo->death_lock);
 	if (philo->meals_eaten == philo->meals_nb)
+	{
 		philo->full_tummy = TRUE;
+		pthread_mutex_unlock(philo->death_lock);
+		return (TRUE);
+	}
+	pthread_mutex_unlock(philo->death_lock);
 	return (FALSE);
 }
 
@@ -104,22 +108,18 @@ void	*philo_routine(void *arg)
 	philo = (t_philo *)arg;
 	forks = philo->forks;
 	philo->time_since_meal = get_current_time(philo->start_time);
+	if (philo->number % 2 == 0)
+		usleep(5000);
 	while (1)
 	{
-		if (philo->full_tummy == TRUE)
-			continue ;
 		if (check_stop(philo) == TRUE)
 			return (NULL);
 		try_to_eat(philo, forks);
 		if (check_stop(philo) == TRUE)
 			return (NULL);
-		if (philo->full_tummy == TRUE)
-			continue ;
 		philo_sleep(philo);
 		if (check_stop(philo) == TRUE)
 			return (NULL);
-		if (philo->full_tummy == TRUE)
-			continue ;
 		philo_think(philo);
 	}
 }

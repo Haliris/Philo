@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 16:58:16 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 17:36:49 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_phil
 		philos[counter]->forks_state = config->forks_state;
 		philos[counter]->meals_nb = config->meals_nb;
 		philos[counter]->meals_eaten = 0;
+		philos[counter]->monitor_ignore = FALSE;
 		counter++;
 	}
 	if (create_thread(philos, philo_ids, config) == PANIC)
@@ -86,7 +87,7 @@ void	kill_philos(t_config *config, pthread_t philo_ids[])
 	}
 }
 
-void	print_monitor_time(t_philo philos, t_config *config, int time)
+void	print_monitor(t_philo philos, t_config *config, int time)
 {
 	pthread_mutex_lock(&config->print_stick);
 	printf("philo: %d monitor time: %d\n", philos.number, time);
@@ -98,8 +99,25 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 	int	current_time;
 
 	current_time = get_current_time(config->start_time);
-	// print_monitor_time(philos, config, current_time - philos.time_since_meal);
-	if (current_time - philos.time_since_meal > config->time_to_die)
+	pthread_mutex_lock(&config->death_lock);
+	if (config->meals_nb != -1)
+	{
+
+		if (philos.full_tummy == TRUE)
+		{
+			philos.full_tummy = FALSE;
+			philos.monitor_ignore = TRUE;
+			config->full_philos++;
+		}
+	}
+	pthread_mutex_unlock(&config->death_lock);
+	if (config->full_philos == config->philos_nb)
+	{
+		kill_philos(config, philo_ids);
+		destroy_mutexes(config->philos_nb, config);
+		*stop_run = TRUE;
+	}
+	else if (current_time - philos.time_since_meal > config->time_to_die && philos.monitor_ignore == FALSE)
 	{
 		pthread_mutex_lock(&config->death_lock);
 		config->death = TRUE;
@@ -111,20 +129,6 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 		pthread_mutex_unlock(&config->print_stick);
 		destroy_mutexes(config->philos_nb, config);
 		return ;
-	}
-	if (config->meals_nb != -1)
-	{
-		if (philos.full_tummy == TRUE) //stop the philosophers
-			config->full_philos++;
-	}
-	if (config->full_philos == config->philos_nb)
-	{
-		pthread_mutex_lock(&config->death_lock);
-		config->death = TRUE;
-		pthread_mutex_unlock(&config->death_lock);
-		*stop_run = TRUE;
-		kill_philos(config, philo_ids);
-		destroy_mutexes(config->philos_nb, config);
 	}
 }
 

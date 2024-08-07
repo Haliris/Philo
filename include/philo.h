@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 16:49:08 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 17:20:48 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_philo
 {
 	int				*death;
 	int				full_tummy;
+	int				monitor_ignore;
 	long			start_time;
 	int				death_time;
 	int				number;
