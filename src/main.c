@@ -6,13 +6,27 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 13:50:04 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:32:39 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// Do I need to protect pthread_create() ???
-
 #include "philo.h"
+
+int	create_thread(t_philo **philos, pthread_t philo_ids[], t_config *config)
+{
+	int	index;
+
+	index = 0;
+	config->start_time = get_start_time();
+	while (index < config->philos_nb)
+	{
+		philos[index]->start_time = config->start_time;
+		if (pthread_create(&philo_ids[index], NULL, philo_routine, philos[index]) != 0)
+			return (PANIC);
+		index++;
+	}
+	return (SUCCESS);
+}
 
 int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_philo **philos)
 {
@@ -31,19 +45,18 @@ int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_phil
 		philos[counter]->right_fork = counter;
 		philos[counter]->number = counter + 1;
 		philos[counter]->forks = config->forks;
-		philos[counter]->meal_lock = config->meal_lock;
-		philos[counter]->print_stick = config->print_stick;
+		philos[counter]->print_stick = &config->print_stick;
 		philos[counter]->time_to_eat = config->time_to_eat;
 		philos[counter]->time_to_sleep = config->time_to_sleep;
-		philos[counter]->start_time = config->start_time;
 		philos[counter]->death = &config->death;
-		philos[counter]->death_lock = config->death_lock;
+		philos[counter]->death_lock = &config->death_lock;
 		philos[counter]->forks_state = config->forks_state;
-		philos[counter]->eating = &config->eat_flag;
-		if (pthread_create(&philo_ids[counter], NULL, philo_routine, philos[counter]) != 0) //add safety here
-			return (PANIC);
+		philos[counter]->meals_nb = config->meals_nb;
+		philos[counter]->meals_eaten = 0;
 		counter++;
 	}
+	if (create_thread(philos, philo_ids, config) == PANIC)
+		return (PANIC);
 	return (SUCCESS);
 }
 
@@ -52,7 +65,7 @@ void	init_config(t_config *config, char ** av, int ac)
 	config->time_to_die = simple_atoi(av[2]);
 	config->time_to_eat = simple_atoi(av[3]);
 	config->time_to_sleep = simple_atoi(av[4]);
-	config->start_time = get_start_time();
+	config->full_philos = 0;
 	config->death = FALSE;
 	if (ac == 6)
 		config->meals_nb = simple_atoi(av[5]);
@@ -79,20 +92,25 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 	current_time = get_current_time(config->start_time);
 	if (current_time - philos.time_since_meal > config->time_to_die)
 	{
-		pthread_mutex_lock(config->death_lock);
+		pthread_mutex_lock(&config->death_lock);
 		config->death = TRUE;
-		pthread_mutex_lock(config->print_stick);
+		pthread_mutex_lock(&config->print_stick);
 		printf("%d %d has died!", current_time, philos.number);
 		*stop_run = TRUE;
-		pthread_mutex_unlock(config->death_lock);
+		pthread_mutex_unlock(&config->death_lock);
 		kill_philos(config, philo_ids);
-		pthread_mutex_unlock(config->print_stick);
+		pthread_mutex_unlock(&config->print_stick);
 		destroy_mutexes(config->philos_nb, config);
 	}
 	if (config->meals_nb != -1)
 	{
-		if (philos.meals_nb == config->meals_nb) //stop the philosophers
-			*stop_run = TRUE;
+		if (philos.full_tummy == TRUE) //stop the philosophers
+			config->full_philos++;
+	}
+	if (config->full_philos == config->philos_nb)
+	{
+		config->death = TRUE;
+		*stop_run = TRUE;
 	}
 }
 
@@ -114,6 +132,19 @@ void monitor_philos(t_philo *philos[], t_config *config, pthread_t philo_ids[])
 			index++;
 		}
 	}
+}
+
+void	free_philos(t_philo **philo_structs, t_config *config)
+{
+	int	index;
+
+	index = 0;
+	while (index < config->philos_nb)
+	{
+		free(philo_structs[index]);
+		index++;
+	}
+	philo_structs = NULL;
 }
 
 int	main(int ac, char **av)
@@ -145,6 +176,6 @@ int	main(int ac, char **av)
 	if (create_philos(&config, philo_ids, config.philos_nb, philo_structs) == PANIC)
 		return (EXIT_FAILURE); // ca leak
 	monitor_philos(philo_structs, &config, philo_ids);
-	//free philo array
+	free_philos(philo_structs, &config);
 	return (EXIT_SUCCESS);
 }

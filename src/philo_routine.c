@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 13:39:12 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:30:19 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ static void	try_to_write(t_philo  *philo, char *message)
 
 static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 {
-	pthread_mutex_lock(philo->meal_lock);
-	*philo->eating = TRUE;
 	if (philo->number % 2 == 0)
 	{
 		pthread_mutex_lock(&forks[philo->left_fork]);
@@ -52,19 +50,32 @@ static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 	try_to_write(philo, "is eating.");
 	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
 	philo->time_since_meal = get_current_time(philo->start_time);
-	philo->meals_nb++;
+	if (philo->meals_nb != -1)
+		philo->meals_eaten++;
 	philo->forks_state[philo->left_fork] = UNLOCKED;
 	philo->forks_state[philo->right_fork] = UNLOCKED;
 	pthread_mutex_unlock(&forks[philo->left_fork]);
 	pthread_mutex_unlock(&forks[philo->right_fork]);
-	*philo->eating = FALSE;
-	pthread_mutex_unlock(philo->meal_lock);
 }
 
 static void	philo_sleep(t_philo *philo)
 {
 	try_to_write(philo, "is sleeping.");
 	ft_usleep(philo, philo->time_to_sleep, get_current_time(philo->start_time));
+}
+
+static int	check_stop(t_philo *philo)
+{
+	pthread_mutex_lock(philo->death_lock);
+	if (*philo->death == TRUE)
+	{
+		pthread_mutex_unlock(philo->death_lock);
+		return (TRUE);
+	}
+	pthread_mutex_unlock(philo->death_lock);
+	if (philo->meals_eaten == philo->meals_nb)
+		philo->full_tummy = TRUE;
+	return (FALSE);
 }
 
 void	*philo_routine(void *arg)
@@ -74,17 +85,23 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	forks = philo->forks;
+	philo->time_since_meal = get_current_time(philo->start_time);
 	while (1)
 	{
-		pthread_mutex_lock(philo->death_lock);
-		if (*philo->death == TRUE)
-		{
-			pthread_mutex_unlock(philo->death_lock);
+		if (check_stop(philo) == TRUE)
 			return (NULL);
-		}
-		pthread_mutex_unlock(philo->death_lock);
+		if (philo->full_tummy == TRUE)
+			continue ;
 		try_to_eat(philo, forks);
+		if (check_stop(philo) == TRUE)
+			return (NULL);
+		if (philo->full_tummy == TRUE)
+			continue ;
 		philo_sleep(philo);
+		if (check_stop(philo) == TRUE)
+			return (NULL);
+		if (philo->full_tummy == TRUE)
+			continue ;
 		try_to_write(philo, "is thinking");
 	}
 }

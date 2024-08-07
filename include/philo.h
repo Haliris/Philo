@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 13:25:22 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:31:36 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,18 @@
 typedef struct s_philo
 {
 	int				*death;
+	int				full_tummy;
 	long			start_time;
 	int				number;
 	int				time_to_sleep;
 	int				time_to_eat;
 	int				time_since_meal;
 	int				meals_nb;
+	int				meals_eaten;
 	int				*eating;
 	int				think_time;
 	int				left_fork;
 	int				right_fork;
-	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*print_stick;
 	pthread_mutex_t	*death_lock;
 	pthread_mutex_t	*forks;
@@ -54,16 +55,15 @@ typedef struct s_philo
 typedef struct s_config
 {
 	int				death;
-	int				eat_flag;
+	int				full_philos;
 	int				meals_nb;
 	int				philos_nb;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	long			start_time;
-	pthread_mutex_t	*meal_lock;
-	pthread_mutex_t	*print_stick;
-	pthread_mutex_t	*death_lock;
+	pthread_mutex_t	print_stick;
+	pthread_mutex_t	death_lock;
 	pthread_mutex_t	forks[MAX_PHILO];
 	int				forks_state[MAX_PHILO];
 }	t_config;
