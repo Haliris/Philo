@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
+#    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/07 17:50:27 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/07 19:36:33 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,9 @@ OBJ_FILES = $(addprefix $(OBJDIR)/, $(SRC_FILES:.c=.o))
 
 all: $(OBJDIR) $(NAME)
 
+debug: CCFLAGS += -fsanitize=thread
+debug: all
+
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CCFLAGS) $(INCLUDE) -c $< -o $@
 
@@ -51,4 +54,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re debug

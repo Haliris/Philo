@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 17:36:49 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 19:50:44 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 	int	current_time;
 
 	current_time = get_current_time(config->start_time);
-	pthread_mutex_lock(&config->death_lock);
 	if (config->meals_nb != -1)
 	{
 
@@ -110,19 +109,18 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 			config->full_philos++;
 		}
 	}
-	pthread_mutex_unlock(&config->death_lock);
 	if (config->full_philos == config->philos_nb)
 	{
 		kill_philos(config, philo_ids);
+		pthread_mutex_unlock(&config->death_lock);
 		destroy_mutexes(config->philos_nb, config);
 		*stop_run = TRUE;
 	}
 	else if (current_time - philos.time_since_meal > config->time_to_die && philos.monitor_ignore == FALSE)
 	{
-		pthread_mutex_lock(&config->death_lock);
 		config->death = TRUE;
 		pthread_mutex_lock(&config->print_stick);
-		printf("%d %d has died!", current_time, philos.number);
+		printf("%d %d has died.", current_time, philos.number);
 		*stop_run = TRUE;
 		pthread_mutex_unlock(&config->death_lock);
 		kill_philos(config, philo_ids);
@@ -130,6 +128,7 @@ void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t p
 		destroy_mutexes(config->philos_nb, config);
 		return ;
 	}
+	pthread_mutex_unlock(&config->death_lock);
 }
 
 void monitor_philos(t_philo *philos[], t_config *config, pthread_t philo_ids[])
@@ -141,6 +140,7 @@ void monitor_philos(t_philo *philos[], t_config *config, pthread_t philo_ids[])
 	stop_run = FALSE;
 	while (stop_run == FALSE)
 	{
+		pthread_mutex_lock(&config->death_lock);
 		check_on_philo(*philos[index], config, &stop_run, philo_ids);
 		if (index == config->philos_nb - 1)
 			index = 0;
@@ -170,9 +170,7 @@ int	main(int ac, char **av)
 	t_config				config;
 	t_philo					*philo_structs[MAX_PHILO];
 	pthread_t				philo_ids[MAX_PHILO];
-	int						index;
 
-	index = 0;
 	if (ac < 5 || ac > 6)
 	{
 		throw_args_error();
@@ -192,7 +190,11 @@ int	main(int ac, char **av)
 		return (EXIT_FAILURE);
 	init_config(&config, av, ac);
 	if (create_philos(&config, philo_ids, config.philos_nb, philo_structs) == PANIC)
-		return (EXIT_FAILURE); // ca leak
+	{
+		destroy_mutexes(config.philos_nb, &config);
+		free_philos(philo_structs, &config);
+		return (EXIT_FAILURE); 
+	}
 	monitor_philos(philo_structs, &config, philo_ids);
 	free_philos(philo_structs, &config);
 	return (EXIT_SUCCESS);

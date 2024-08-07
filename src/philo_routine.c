@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 17:52:39 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 19:55:28 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,10 @@ static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 	}
 	try_to_write(philo, "is eating.");
 	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
+	pthread_mutex_lock(philo->death_lock);
 	philo->time_since_meal = get_current_time(philo->start_time);
-	if (philo->meals_nb != -1)
-		philo->meals_eaten++;
+	philo->meals_eaten++;
+	pthread_mutex_unlock(philo->death_lock);
 	philo->forks_state[philo->left_fork] = UNLOCKED;
 	philo->forks_state[philo->right_fork] = UNLOCKED;
 	pthread_mutex_unlock(&forks[philo->left_fork]);
@@ -107,7 +108,9 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	forks = philo->forks;
+	pthread_mutex_lock(philo->death_lock);
 	philo->time_since_meal = get_current_time(philo->start_time);
+	pthread_mutex_unlock(philo->death_lock);
 	if (philo->number % 2 == 0)
 		usleep(5000);
 	while (1)
