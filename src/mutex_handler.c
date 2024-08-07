@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 17:51:14 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/06 19:14:07 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:40:31 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,18 @@ void	destroy_mutexes(int philos_nb, t_config *config)
 	int	index;
 
 	index = 0;
-	if (config->death == TRUE)
-		pthread_mutex_unlock(config->death_lock);
 	pthread_mutex_destroy(config->print_stick);
 	pthread_mutex_destroy(config->death_lock);
+	if (config->eat_flag == TRUE)
+		pthread_mutex_unlock(config->meal_lock);
 	pthread_mutex_destroy(config->meal_lock);
 	free(config->print_stick);
 	free(config->meal_lock);
 	free(config->death_lock);
 	while (index < philos_nb)
 	{
+		if (config->forks_state[index] == LOCKED)
+			pthread_mutex_unlock(&config->forks[index]);
 		pthread_mutex_destroy(&config->forks[index]);
 		index++;
 	}

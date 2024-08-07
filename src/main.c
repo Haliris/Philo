@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/06 19:37:47 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:50:04 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,10 @@ int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_phil
 		if (!philos[counter])
 			return (PANIC);
 		if (counter == 0)
-			philos[counter]->left_fork = MAX_PHILO - 1;
+			philos[counter]->left_fork = philos_nb - 1;
 		else
 			philos[counter]->left_fork = counter - 1;
-		if (counter == philos_nb - 1)
-			philos[counter]->right_fork = 0;
-		else
-			philos[counter]->right_fork = counter;
+		philos[counter]->right_fork = counter;
 		philos[counter]->number = counter + 1;
 		philos[counter]->forks = config->forks;
 		philos[counter]->meal_lock = config->meal_lock;
@@ -41,6 +38,8 @@ int	create_philos(t_config *config, pthread_t philo_ids[], int philos_nb, t_phil
 		philos[counter]->start_time = config->start_time;
 		philos[counter]->death = &config->death;
 		philos[counter]->death_lock = config->death_lock;
+		philos[counter]->forks_state = config->forks_state;
+		philos[counter]->eating = &config->eat_flag;
 		if (pthread_create(&philo_ids[counter], NULL, philo_routine, philos[counter]) != 0) //add safety here
 			return (PANIC);
 		counter++;
@@ -55,35 +54,49 @@ void	init_config(t_config *config, char ** av, int ac)
 	config->time_to_sleep = simple_atoi(av[4]);
 	config->start_time = get_start_time();
 	config->death = FALSE;
-	printf("START TIME IS: %ld\n", config->start_time);
 	if (ac == 6)
 		config->meals_nb = simple_atoi(av[5]);
 	else
 		config->meals_nb = -1;
 }
 
-void check_on_philo(t_philo philo, t_config *config, int *stop_run)
+void	kill_philos(t_config *config, pthread_t philo_ids[])
+{
+	int	index;
+
+	index = 0;
+	while (index < config->philos_nb)
+	{
+		pthread_join(philo_ids[index], NULL);
+		index++;
+	}
+}
+
+void check_on_philo(t_philo philos, t_config *config, int *stop_run, pthread_t philo_ids[])
 {
 	int	current_time;
 
 	current_time = get_current_time(config->start_time);
-	if (current_time - philo.time_since_meal > config->time_to_die)
+	if (current_time - philos.time_since_meal > config->time_to_die)
 	{
 		pthread_mutex_lock(config->death_lock);
 		config->death = TRUE;
 		pthread_mutex_lock(config->print_stick);
-		printf("%d %d has died!", current_time, philo.number);
-		pthread_mutex_unlock(config->print_stick);
+		printf("%d %d has died!", current_time, philos.number);
 		*stop_run = TRUE;
+		pthread_mutex_unlock(config->death_lock);
+		kill_philos(config, philo_ids);
+		pthread_mutex_unlock(config->print_stick);
+		destroy_mutexes(config->philos_nb, config);
 	}
 	if (config->meals_nb != -1)
 	{
-		if (philo.meals_nb == config->meals_nb) //stop the philosophers
+		if (philos.meals_nb == config->meals_nb) //stop the philosophers
 			*stop_run = TRUE;
 	}
 }
 
-void monitor_philos(t_philo *philos[], t_config *config)
+void monitor_philos(t_philo *philos[], t_config *config, pthread_t philo_ids[])
 {
 	int	index;
 	int	stop_run;
@@ -92,11 +105,14 @@ void monitor_philos(t_philo *philos[], t_config *config)
 	stop_run = FALSE;
 	while (stop_run == FALSE)
 	{
-		check_on_philo(*philos[index], config, &stop_run);
+		check_on_philo(*philos[index], config, &stop_run, philo_ids);
 		if (index == config->philos_nb - 1)
 			index = 0;
 		else
+		{
+			usleep(10);
 			index++;
+		}
 	}
 }
 
@@ -128,15 +144,7 @@ int	main(int ac, char **av)
 	init_config(&config, av, ac);
 	if (create_philos(&config, philo_ids, config.philos_nb, philo_structs) == PANIC)
 		return (EXIT_FAILURE); // ca leak
-	monitor_philos(philo_structs, &config);
-	while (index < config.philos_nb)
-	{
-		pthread_detach(philo_ids[index]);
-		pthread_join(philo_ids[index], NULL);
-		index++;
-	}
-	destroy_mutexes(config.philos_nb, &config);
+	monitor_philos(philo_structs, &config, philo_ids);
 	//free philo array
-	//detach pthread
 	return (EXIT_SUCCESS);
 }

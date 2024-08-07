@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/06 19:11:55 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:25:22 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # define SUCCESS 0
 # define PARSE_ERROR 1
 # define PANIC 1
+# define UNLOCKED 0
+# define LOCKED 1
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 # ifndef MAX_PHILO
@@ -38,6 +40,7 @@ typedef struct s_philo
 	int				time_to_eat;
 	int				time_since_meal;
 	int				meals_nb;
+	int				*eating;
 	int				think_time;
 	int				left_fork;
 	int				right_fork;
@@ -45,11 +48,13 @@ typedef struct s_philo
 	pthread_mutex_t	*print_stick;
 	pthread_mutex_t	*death_lock;
 	pthread_mutex_t	*forks;
+	int				*forks_state;
 }	t_philo;
 
 typedef struct s_config
 {
 	int				death;
+	int				eat_flag;
 	int				meals_nb;
 	int				philos_nb;
 	int				time_to_die;
@@ -60,6 +65,7 @@ typedef struct s_config
 	pthread_mutex_t	*print_stick;
 	pthread_mutex_t	*death_lock;
 	pthread_mutex_t	forks[MAX_PHILO];
+	int				forks_state[MAX_PHILO];
 }	t_config;
 
 void		print_log(char *str, int fd);

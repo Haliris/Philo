@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/06 19:37:44 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:39:12 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 static void	try_to_write(t_philo  *philo, char *message)
 {
+	pthread_mutex_lock(philo->death_lock);
+	if (*philo->death == TRUE)
+	{
+		pthread_mutex_unlock(philo->death_lock);
+		return ;
+	}
+	pthread_mutex_unlock(philo->death_lock);
 	pthread_mutex_lock(philo->print_stick);
 	printf("%ld %d %s\n", get_current_time(philo->start_time), philo->number, message);
 	pthread_mutex_unlock(philo->print_stick);
@@ -22,18 +29,23 @@ static void	try_to_write(t_philo  *philo, char *message)
 static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 {
 	pthread_mutex_lock(philo->meal_lock);
+	*philo->eating = TRUE;
 	if (philo->number % 2 == 0)
 	{
 		pthread_mutex_lock(&forks[philo->left_fork]);
+		philo->forks_state[philo->left_fork] = LOCKED;
 		try_to_write(philo, "has taken a fork.");
 		pthread_mutex_lock(&forks[philo->right_fork]);
+		philo->forks_state[philo->right_fork] = LOCKED;
 		try_to_write(philo, "has taken a fork.");
 	}
 	else
 	{
 		pthread_mutex_lock(&forks[philo->right_fork]);
+		philo->forks_state[philo->right_fork] = LOCKED;
 		try_to_write(philo, "has taken a fork.");
 		pthread_mutex_lock(&forks[philo->left_fork]);
+		philo->forks_state[philo->left_fork] = LOCKED;
 		try_to_write(philo, "has taken a fork.");
 
 	}
@@ -41,8 +53,11 @@ static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
 	philo->time_since_meal = get_current_time(philo->start_time);
 	philo->meals_nb++;
+	philo->forks_state[philo->left_fork] = UNLOCKED;
+	philo->forks_state[philo->right_fork] = UNLOCKED;
 	pthread_mutex_unlock(&forks[philo->left_fork]);
 	pthread_mutex_unlock(&forks[philo->right_fork]);
+	*philo->eating = FALSE;
 	pthread_mutex_unlock(philo->meal_lock);
 }
 
