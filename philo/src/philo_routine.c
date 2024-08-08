@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 18:16:42 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 18:38:37 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	*philo_routine(void *arg)
 	philo->time_since_meal = get_current_time(philo->start_time);
 	pthread_mutex_unlock(philo->death_lock);
 	if (philo->number % 2 == 0)
-		usleep(100);
+		usleep(500);
 	while (1)
 	{
 		if (check_stop(philo) == TRUE)
