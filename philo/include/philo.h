@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 17:10:02 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 22:22:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	ft_usleep(t_philo *philo, int time_ms, long start_time);
 
 int		add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo);
 void	*philo_routine(void *arg);
+void	*solo_routine(void *arg);
 void	monitor_philo(t_philo *philo[], t_config *conf, pthread_t philo_id[]);
 
 void	try_to_write(t_philo *philo, char *message);

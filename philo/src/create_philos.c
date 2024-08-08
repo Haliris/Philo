@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_philos.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 17:08:50 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 22:27:35 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,18 @@ static void	panic_free_philos(t_philo **philos, int size)
 		index++;
 	}
 	philos = NULL;
+}
+
+static int	make_single_philo(t_philo **philo, pthread_t id[], t_config *conf)
+{
+	conf->start_time = get_start_time();
+	philo[0]->start_time = conf->start_time;
+	if (pthread_create(&id[0], NULL, solo_routine, philo[0]) != 0)
+	{
+		free(philo[0]);
+		return (PANIC);
+	}
+	return (SUCCESS);
 }
 
 static int	make_thread(t_philo **philos, pthread_t philo_ids[], t_config *conf)
@@ -79,7 +91,12 @@ int	add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo)
 		copy_conf(conf, philo[counter], nb, counter);
 		counter++;
 	}
-	if (make_thread(philo, id, conf) == PANIC)
+	if (nb == 1)
+	{
+		if (make_single_philo(philo, id, conf) == PANIC)
+			return (PANIC);
+	}
+	else if (make_thread(philo, id, conf) == PANIC)
 	{
 		panic_free_philos(philo, nb);
 		return (PANIC);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 17:10:20 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 22:31:04 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,10 @@ static int	parse_args(t_config *config, int ac, char **av)
 	if (check_number(ac, av) == PARSE_ERROR)
 		return (PANIC);
 	config->philos_nb = simple_atoi(av[1]);
-	if (config->philos_nb > MAX_PHILO)
+	if (config->philos_nb > MAX_PHILO || config->philos_nb <= 0)
 	{
-		print_log("Number of philos above MAX_PHILO number!\n", STDERR_FILENO);
-		print_log("run 'Make MAX_PHILO=[number]'\n", STDERR_FILENO);
+		print_log("Invalid number of philosophers.\n", STDERR_FILENO);
+		print_log("run 'make MAX_PHILO=[number]'\n", STDERR_FILENO);
 		return (PANIC);
 	}
 	return (SUCCESS);
