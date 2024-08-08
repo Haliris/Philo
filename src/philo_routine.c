@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 14:50:44 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 18:16:42 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,15 @@ static void	philo_sleep(t_philo *philo)
 
 static void	philo_think(t_philo *philo)
 {
-	int	time_left;
-	int	timestamp;
-	int	reserved_time;
+	long	time_left;
+	long	timestamp;
+	long	reserved_time;
 
 	timestamp = get_current_time(philo->start_time);
-	reserved_time = (timestamp - philo->time_since_meal) - 10;
+	reserved_time = timestamp - philo->time_since_meal;
 	time_left = philo->death_time - reserved_time;
 	try_to_write(philo, "is thinking");
-	if (time_left > philo->time_to_eat)
+	if (time_left >= philo->time_to_eat)
 		ft_usleep(philo, (time_left - philo->time_to_eat) * 0.90, timestamp);
 }
 

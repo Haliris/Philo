@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 17:09:48 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 18:09:29 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static void	check_philo(t_philo philos, t_config *config, int *stop_run)
 	{
 		config->death = TRUE;
 		pthread_mutex_lock(&config->print_stick);
-		printf("%d %d has died.", curr_time, philos.number);
+		printf("%d %d has died.\n", curr_time, philos.number);
 		pthread_mutex_unlock(&config->print_stick);
 		*stop_run = TRUE;
 	}
