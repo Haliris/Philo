@@ -6,13 +6,13 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:55:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/06 19:33:49 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 14:36:04 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long	get_start_time()
+long	get_start_time(void)
 {
 	struct timeval	time;
 

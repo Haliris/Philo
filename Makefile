@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
+#    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/07 19:36:33 by marvin           ###   ########.fr        #
+#    Updated: 2024/08/08 14:46:56 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,9 +23,12 @@ OBJDIR = obj
 INCLUDE = -I ./include
 SRC_FILES = main.c \
 			utils.c \
+			create_philos.c \
 			mutex_handler.c \
+			monitor_philos.c \
 			time_utils.c \
 			philo_routine.c \
+			philo_routine_utils.c \
 
 vpath %.c ./ src/
 

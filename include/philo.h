@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 17:20:48 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/08 17:10:02 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,19 +70,23 @@ typedef struct s_config
 	int				forks_state[MAX_PHILO];
 }	t_config;
 
-void		print_log(char *str, int fd);
-void		throw_args_error(void);
-int			simple_atoi(const char *nptr);
-int			check_number(int ac, char **av);
+void	print_log(char *str, int fd);
+void	throw_args_error(void);
+int		simple_atoi(const char *nptr);
+int		check_number(int ac, char **av);
 
-void		destroy_mutexes(int philos_nb, t_config *config);
-int			init_mutexes(int philos_nb, t_config *config);
+void	destroy_mutexes(int philos_nb, t_config *config);
+int		init_mutexes(int philos_nb, t_config *config);
 
-long		get_start_time();
-long		get_current_time(long start_time);
-void		ft_usleep(t_philo *philo, int time_ms, long start_time);
+long	get_start_time(void);
+long	get_current_time(long start_time);
+void	ft_usleep(t_philo *philo, int time_ms, long start_time);
 
-
+int		add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo);
 void	*philo_routine(void *arg);
+void	monitor_philo(t_philo *philo[], t_config *conf, pthread_t philo_id[]);
+
+void	try_to_write(t_philo *philo, char *message);
+int		check_stop(t_philo *philo);
 
 #endif
