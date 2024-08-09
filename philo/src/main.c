@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 22:31:04 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/09 11:45:26 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,19 @@ int	main(int ac, char **av)
 {
 	t_config				conf;
 	t_philo					*philo_structs[MAX_PHILO];
-	pthread_t				philo_ids[MAX_PHILO];
+	pthread_t				philo_id[MAX_PHILO];
 
 	if (parse_args(&conf, ac, av) == PANIC)
 		return (EXIT_FAILURE);
 	if (init_mutexes(conf.philos_nb, &conf) == PANIC)
 		return (EXIT_FAILURE);
 	init_config(&conf, av, ac);
-	if (add_philo(&conf, philo_ids, conf.philos_nb, philo_structs) == PANIC)
+	if (add_philo(&conf, philo_id, conf.philos_nb, philo_structs) == PANIC)
 	{
 		destroy_mutexes(conf.philos_nb, &conf);
 		return (EXIT_FAILURE);
 	}
-	monitor_philo(philo_structs, &conf, philo_ids);
+	monitor_philo(philo_structs, &conf, philo_id);
 	free_philos(philo_structs, &conf);
 	return (EXIT_SUCCESS);
 }
