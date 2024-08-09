@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 15:49:08 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 16:57:27 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,60 +36,61 @@ static void	kill_philos(t_config *config, pid_t philo_ids[])
 	}
 }
 
-static void	check_tummy(t_config *config, t_philo philos)
+void	*check_death(void *arg)
 {
-	if (config->meals_nb != -1)
+	t_config	*conf;
+
+	conf = (t_config *)arg;
+	sem_wait(conf->death_sem);
+	conf->death = TRUE;
+	return (NULL);
+}
+
+void	*check_meal(void *arg)
+{
+	t_config	*config;
+	int			full_nb;
+
+	config = (t_config *)arg;
+	full_nb = 0;
+	while (full_nb < config->philos_nb)
 	{
-		if (philos.full_tummy == TRUE)
+		sem_wait(config->meal_sem);
+		full_nb++;
+		sem_wait(config->meal_sem);
+	}
+	config->full_philos = TRUE;
+	return (NULL);
+}
+
+void	monitor_philo(t_config *conf, pid_t philo_id[]) // REFACTOR MEAL CHECKING LOGIC
+{
+	pthread_t	death_monitor;
+	pthread_t	meal_monitor;
+
+	death_monitor = 0;
+	meal_monitor = 0;
+	sem_wait(conf->death_sem);
+	sem_wait(conf->meal_sem);
+	if (pthread_create(&death_monitor, NULL, check_death, conf) != 0)
+	{
+		//WTFFFFF
+		return ;
+	}
+	if (pthread_create(&meal_monitor, NULL, check_meal, conf) != 0)
+	{
+		//WTFFFFF
+		return ;
+	}
+	while (conf->full_philos == FALSE)
+	{
+		if (conf->death == TRUE)
 		{
-			philos.full_tummy = FALSE;
-			philos.monitor_ignore = TRUE;
-			config->full_philos++;
+			kill_philos(conf, philo_id);
+			return ;
 		}
-	}
-}
-
-static void	check_philo(t_philo philos, t_config *config, int *stop_run, pid_t ids[])
-{
-	int	curr_time;
-	int	time_die;
-	int	time_meal;
-
-	time_die = config->time_to_die;
-	time_meal = philos.time_since_meal;
-	curr_time = get_current_time(config->start_time);
-	check_tummy(config, philos);
-	if (config->full_philos == config->philos_nb)
-		*stop_run = TRUE;
-	else if (curr_time - time_meal > time_die && philos.monitor_ignore == FALSE)
-	{
-		kill_philos(config, ids);
-		sem_wait(config->print_sem);
-		printf("%d %d has died.\n", curr_time, philos.number);
-		sem_post(config->print_sem);
-		*stop_run = TRUE;
-	}
-}
-
-void	monitor_philo(t_philo *philo[], t_config *conf, pid_t philo_id[])
-{
-	int	index;
-	int	stop_run;
-
-	index = 0;
-	stop_run = FALSE;
-	while (stop_run == FALSE)
-	{
-		sem_wait(conf->death_sem);
-		check_philo(*philo[index], conf, &stop_run, philo_id);
-		sem_post(conf->death_sem);
-		if (index == conf->philos_nb - 1)
-			index = 0;
 		else
-		{
 			usleep(10);
-			index++;
-		}
 	}
-	wait_philos(conf, philo_id);
+	wait_philos(conf, philo_id); //useless??
 }

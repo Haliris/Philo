@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 15:43:52 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 16:55:40 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ static void	init_config(t_config *config, char **av, int ac)
 	config->time_to_die = simple_atoi(av[2]);
 	config->time_to_eat = simple_atoi(av[3]);
 	config->time_to_sleep = simple_atoi(av[4]);
+	config->death = FALSE;
+	config->full_philos = FALSE;
 	config->full_philos = 0;
 	if (ac == 6)
 		config->meals_nb = simple_atoi(av[5]);
@@ -73,8 +75,10 @@ int	main(int ac, char **av)
 		close_semaphores(&conf);
 		return (EXIT_FAILURE);
 	}
-	monitor_philo(philo_structs, &conf, philo_ids);
+	monitor_philo(&conf, philo_ids);
 	close_semaphores(&conf);
 	free_philos(philo_structs, &conf);
 	return (EXIT_SUCCESS);
 }
+
+// FREE MEMORY IN CHILDREN ??

@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 15:45:22 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:00:41 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,11 @@ typedef enum e_sem_error
 	FORK_ERR,
 	PRINT_ERR,
 	DEATH_ERR,
-	ALL_ERR,
+	MEAL_ERR,
 }	t_sem_error;
 typedef struct s_philo
 {
+	int				dead;
 	int				full_tummy;
 	int				monitor_ignore;
 	long			start_time;
@@ -61,10 +62,12 @@ typedef struct s_philo
 	sem_t			*forks;
 	sem_t			*death_sem;
 	sem_t			*print_sem;
+	sem_t			*meal_sem;
 }	t_philo;
 
 typedef struct s_config
 {
+	int				death;
 	int				full_philos;
 	int				meals_nb;
 	int				philos_nb;
@@ -75,6 +78,7 @@ typedef struct s_config
 	sem_t			*forks;
 	sem_t			*death_sem;
 	sem_t			*print_sem;
+	sem_t			*meal_sem;
 }	t_config;
 
 void	print_log(char *str, int fd);
@@ -91,9 +95,8 @@ void	ft_usleep(t_philo *philo, int time_ms, long start_time);
 
 int		add_philo(t_config *conf, pid_t id[], int nb, t_philo **philo);
 void	philo_routine(t_philo *philo);
-void	monitor_philo(t_philo *philo[], t_config *conf, pid_t philo_id[]);
+void	monitor_philo(t_config *conf, pid_t philo_id[]);
 
 void	try_to_write(t_philo *philo, char *message);
-void	check_stop(t_philo *philo);
 
 #endif

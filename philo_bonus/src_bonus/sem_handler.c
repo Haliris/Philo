@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 13:43:42 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 15:13:03 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 16:51:07 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,15 @@ static void	panic_close_sem(t_config *conf, t_sem_error err)
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
 	}
+	else  if (err == MEAL_ERR)
+	{
+		sem_close(conf->forks);
+		sem_unlink("/forks");
+		sem_close(conf->print_sem);
+		sem_unlink("/print");
+		sem_close(conf->death_sem);
+		sem_unlink("/death");
+	}
 }
 
 static void	unlink_prev_sems(void)
@@ -33,6 +42,7 @@ static void	unlink_prev_sems(void)
 	sem_unlink("/forks");
 	sem_unlink("/print");
 	sem_unlink("/death");
+	sem_unlink("/meal");
 }
 
 void	close_semaphores(t_config *conf)
@@ -43,6 +53,8 @@ void	close_semaphores(t_config *conf)
 	sem_unlink("/death");
 	sem_close(conf->print_sem);
 	sem_unlink("/print");
+	sem_close(conf->meal_sem);
+	sem_unlink("/meal");
 }
 
 int	open_semaphores(t_config *conf)
@@ -65,6 +77,12 @@ int	open_semaphores(t_config *conf)
 		conf->death_sem = sem_open("/death", O_CREAT, 0644, 1);
 		if (conf->death_sem == SEM_FAILED)
 			status = DEATH_ERR;
+	}
+	if (status == OK)
+	{
+		conf->meal_sem = sem_open("/meal", O_CREAT, 0644, 1);
+		if (conf->meal_sem == SEM_FAILED)
+			status = MEAL_ERR;
 	}
 	if (status != OK)
 	{
