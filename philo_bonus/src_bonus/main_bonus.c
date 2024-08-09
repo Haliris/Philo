@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:59:14 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 14:21:19 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,20 @@ int	main(int ac, char **av)
 {
 	t_config				conf;
 	t_philo					*philo_structs[MAX_PHILO];
-	sem_t					*forks;
 	pid_t					philo_ids[MAX_PHILO];
 
 	if (parse_args(&conf, ac, av) == PANIC)
 		return (EXIT_FAILURE);
 	init_config(&conf, av, ac);
-	if (open_semaphores(&forks, &conf) == PANIC)
+	if (open_semaphores(&conf) == PANIC)
 		return (EXIT_FAILURE);
 	if (add_philo(&conf, philo_ids, conf.philos_nb, philo_structs) == PANIC)
 	{
+		close_semaphores(&conf);
 		return (EXIT_FAILURE);
 	}
 	monitor_philo(philo_structs, &conf, philo_ids);
-	close_semaphores(&forks, &conf);
+	close_semaphores(&conf);
 	free_philos(philo_structs, &conf);
 	return (EXIT_SUCCESS);
 }

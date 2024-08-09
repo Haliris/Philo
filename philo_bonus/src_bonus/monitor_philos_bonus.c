@@ -6,13 +6,13 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:56:32 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 14:33:15 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	wait_philos(t_config *config, pthread_t philo_ids[])
+static void	wait_philos(t_config *config, pid_t philo_ids[])
 {
 	int	index;
 
@@ -59,7 +59,7 @@ static void	check_philo(t_philo philos, t_config *config, int *stop_run)
 	}
 }
 
-void	monitor_philo(t_philo *philo[], t_config *conf, pthread_t philo_id[])
+void	monitor_philo(t_philo *philo[], t_config *conf, pid_t philo_id[])
 {
 	int	index;
 	int	stop_run;

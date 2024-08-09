@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:58:47 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 14:33:59 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	philo_routine(t_philo *philo)
 	philo->time_since_meal = get_current_time(philo->start_time);
 	sem_post(philo->death_sem);
 	if (philo->number % 2 == 0)
-		usleep(500);
+		usleep(philo->time_to_eat / 2);
 	while (1)
 	{
 		if (check_stop(philo) == TRUE)
