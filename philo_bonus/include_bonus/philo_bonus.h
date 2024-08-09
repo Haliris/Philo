@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 14:20:43 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:45:22 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <semaphore.h>
+# include <signal.h>
 # define FALSE 0
 # define TRUE 1
 # define SUCCESS 0
@@ -45,7 +46,6 @@ typedef enum e_sem_error
 }	t_sem_error;
 typedef struct s_philo
 {
-	int				*death;
 	int				full_tummy;
 	int				monitor_ignore;
 	long			start_time;
@@ -65,7 +65,6 @@ typedef struct s_philo
 
 typedef struct s_config
 {
-	int				death;
 	int				full_philos;
 	int				meals_nb;
 	int				philos_nb;
@@ -95,6 +94,6 @@ void	philo_routine(t_philo *philo);
 void	monitor_philo(t_philo *philo[], t_config *conf, pid_t philo_id[]);
 
 void	try_to_write(t_philo *philo, char *message);
-int		check_stop(t_philo *philo);
+void	check_stop(t_philo *philo);
 
 #endif

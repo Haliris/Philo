@@ -6,24 +6,21 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 14:07:02 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:47:15 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	wait_philos_panic(int nb, pid_t ids[], t_config *config)
+static void	kill_philos_panic(int nb, pid_t ids[])
 {
 	int	index;
 
 	index = 0;
 
-	sem_wait(config->death_sem);
-	config->death = TRUE;
-	sem_post(config->death_sem);
 	while (index > nb)
 	{
-		waitpid(ids[index], NULL, 0);
+		kill(ids[index], SIGKILL);
 		index++;
 	}
 }
@@ -36,7 +33,7 @@ static void	panic_free_philos(t_philo **philos, int n, pid_t id[], t_config *con
 	while (index < n)
 	{
 		if (n == conf->philos_nb)
-			wait_philos_panic(conf->philos_nb, id, conf);
+			kill_philos_panic(conf->philos_nb, id);
 		free(philos[index]);
 		index++;
 	}
@@ -56,7 +53,7 @@ static int	make_fork(t_philo **philos, pid_t philo_ids[], t_config *conf)
 		child_id = fork();
 		if (child_id == -1)
 		{
-			wait_philos_panic(index, philo_ids, conf);
+			kill_philos_panic(index, philo_ids);
 			return (PANIC);
 		}
 		if (child_id == 0)
@@ -78,7 +75,6 @@ static void	copy_conf(t_config *conf, t_philo *philos, int index)
 	philos->time_to_eat = conf->time_to_eat;
 	philos->death_time = conf->time_to_die;
 	philos->time_to_sleep = conf->time_to_sleep;
-	philos->death = &conf->death;
 	philos->death_sem = conf->death_sem;
 	philos->meals_nb = conf->meals_nb;
 	philos->meals_eaten = 0;

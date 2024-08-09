@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 14:33:59 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:27:40 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,11 @@ void	philo_routine(t_philo *philo)
 		usleep(philo->time_to_eat / 2);
 	while (1)
 	{
-		if (check_stop(philo) == TRUE)
-			exit(EXIT_SUCCESS);
+		check_stop(philo);
 		try_to_eat(philo, forks);
-		if (check_stop(philo) == TRUE)
-			exit(EXIT_SUCCESS);
+		check_stop(philo);
 		philo_sleep(philo);
-		if (check_stop(philo) == TRUE)
-			exit(EXIT_SUCCESS);
+		check_stop(philo);
 		philo_think(philo);
 	}
 }

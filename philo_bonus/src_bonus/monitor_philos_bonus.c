@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 14:33:15 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:49:08 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,18 @@ static void	wait_philos(t_config *config, pid_t philo_ids[])
 	}
 }
 
+static void	kill_philos(t_config *config, pid_t philo_ids[])
+{
+	int	index;
+
+	index = 0;
+	while (index < config->philos_nb)
+	{
+		kill(philo_ids[index], SIGKILL);
+		index++;
+	}
+}
+
 static void	check_tummy(t_config *config, t_philo philos)
 {
 	if (config->meals_nb != -1)
@@ -37,7 +49,7 @@ static void	check_tummy(t_config *config, t_philo philos)
 	}
 }
 
-static void	check_philo(t_philo philos, t_config *config, int *stop_run)
+static void	check_philo(t_philo philos, t_config *config, int *stop_run, pid_t ids[])
 {
 	int	curr_time;
 	int	time_die;
@@ -51,7 +63,7 @@ static void	check_philo(t_philo philos, t_config *config, int *stop_run)
 		*stop_run = TRUE;
 	else if (curr_time - time_meal > time_die && philos.monitor_ignore == FALSE)
 	{
-		config->death = TRUE;
+		kill_philos(config, ids);
 		sem_wait(config->print_sem);
 		printf("%d %d has died.\n", curr_time, philos.number);
 		sem_post(config->print_sem);
@@ -69,7 +81,7 @@ void	monitor_philo(t_philo *philo[], t_config *conf, pid_t philo_id[])
 	while (stop_run == FALSE)
 	{
 		sem_wait(conf->death_sem);
-		check_philo(*philo[index], conf, &stop_run);
+		check_philo(*philo[index], conf, &stop_run, philo_id);
 		sem_post(conf->death_sem);
 		if (index == conf->philos_nb - 1)
 			index = 0;

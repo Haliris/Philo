@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 14:21:19 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:43:52 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ static void	init_config(t_config *config, char **av, int ac)
 	config->time_to_eat = simple_atoi(av[3]);
 	config->time_to_sleep = simple_atoi(av[4]);
 	config->full_philos = 0;
-	config->death = FALSE;
 	if (ac == 6)
 		config->meals_nb = simple_atoi(av[5]);
 	else
