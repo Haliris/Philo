@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 17:10:36 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:38:34 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ static void	copy_conf(t_config *conf, t_philo *philos, int index)
 	philos->death_time = conf->time_to_die;
 	philos->time_to_sleep = conf->time_to_sleep;
 	philos->death_sem = conf->death_sem;
-	philos->meal_sem = conf->meal_sem;
 	philos->meals_nb = conf->meals_nb;
 	philos->meals_eaten = 0;
 	philos->monitor_ignore = FALSE;

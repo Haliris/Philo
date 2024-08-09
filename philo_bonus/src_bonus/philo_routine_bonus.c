@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 17:22:11 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:54:00 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	*check_stop(void *arg)
 			philo->dead = TRUE;
 			return (NULL);
 		}
-		usleep(10);
+		usleep(1000);
 	}
 }
 
@@ -100,7 +100,7 @@ void	philo_routine(t_philo *philo)
 	if (pthread_create(&monitor, NULL, check_stop, philo) != 0)
 		exit(EXIT_FAILURE);
 	if (philo->number % 2 == 0)
-		usleep(philo->time_to_eat / 2);
+		usleep((philo->time_to_eat / 2) * 1000);
 	while (1)
 	{
 		if (philo->dead == TRUE)
@@ -108,16 +108,13 @@ void	philo_routine(t_philo *philo)
 		try_to_eat(philo, forks);
 		if (philo->dead == TRUE)
 			exit(EXIT_SUCCESS);
-		if (philo->meals_eaten == philo->meals_nb)
-		{
-			sem_post(philo->meal_sem);
-			exit(EXIT_SUCCESS);
-		}
 		philo_sleep(philo);
 		if (philo->dead == TRUE)
 			exit(EXIT_SUCCESS);
 		philo_think(philo);
 		if (philo->dead == TRUE)
+			exit(EXIT_SUCCESS);
+		if (philo->meals_eaten == philo->meals_nb)
 			exit(EXIT_SUCCESS);
 	}
 }

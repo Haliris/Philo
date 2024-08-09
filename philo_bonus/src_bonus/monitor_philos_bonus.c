@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 16:57:27 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:37:04 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,19 +46,14 @@ void	*check_death(void *arg)
 	return (NULL);
 }
 
-void	*check_meal(void *arg)
+void	*wait_meal(void *arg)
 {
 	t_config	*config;
 	int			full_nb;
 
 	config = (t_config *)arg;
 	full_nb = 0;
-	while (full_nb < config->philos_nb)
-	{
-		sem_wait(config->meal_sem);
-		full_nb++;
-		sem_wait(config->meal_sem);
-	}
+	wait_philos(config, config->philo_id);
 	config->full_philos = TRUE;
 	return (NULL);
 }
@@ -70,14 +65,14 @@ void	monitor_philo(t_config *conf, pid_t philo_id[]) // REFACTOR MEAL CHECKING L
 
 	death_monitor = 0;
 	meal_monitor = 0;
+	conf->philo_id = philo_id;
 	sem_wait(conf->death_sem);
-	sem_wait(conf->meal_sem);
 	if (pthread_create(&death_monitor, NULL, check_death, conf) != 0)
 	{
 		//WTFFFFF
 		return ;
 	}
-	if (pthread_create(&meal_monitor, NULL, check_meal, conf) != 0)
+	if (pthread_create(&meal_monitor, NULL, wait_meal, conf) != 0)
 	{
 		//WTFFFFF
 		return ;
@@ -92,5 +87,4 @@ void	monitor_philo(t_config *conf, pid_t philo_id[]) // REFACTOR MEAL CHECKING L
 		else
 			usleep(10);
 	}
-	wait_philos(conf, philo_id); //useless??
 }
