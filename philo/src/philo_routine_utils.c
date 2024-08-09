@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:03:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 22:28:23 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/09 11:27:36 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,12 @@ int	check_stop(t_philo *philo)
 
 static void	eat_alone(t_philo *philo, pthread_mutex_t *forks)
 {
+	long	timestamp;
+
 	pthread_mutex_lock(&forks[philo->right_fork]);
 	try_to_write(philo, "has taken a fork.");
-	ft_usleep(philo, philo->death_time + 10, get_current_time(philo->start_time));
+	timestamp = get_current_time(philo->start_time);
+	ft_usleep(philo, philo->death_time + 10, timestamp);
 	pthread_mutex_unlock(&forks[philo->right_fork]);
 }
 
