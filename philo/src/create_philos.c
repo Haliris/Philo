@@ -6,13 +6,13 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 11:43:34 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:03:01 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	panic_free_philos(t_config *conf, t_philo **philos, int size, pthread_t ids[])
+static void	kill_philos(t_config *conf, t_philo **philos, int n, pthread_t id[])
 {
 	int	index;
 
@@ -21,10 +21,10 @@ static void	panic_free_philos(t_config *conf, t_philo **philos, int size, pthrea
 	print_log("CATASTROPHIC CREATE_PHILOS EXCEPTION.", STDERR_FILENO);
 	conf->death = TRUE;
 	pthread_mutex_unlock(&conf->death_lock);
-	while (index < size)
+	while (index < n)
 	{
-		if (size == conf->philos_nb)
-			pthread_join(ids[index], NULL);
+		if (n == conf->philos_nb)
+			pthread_join(id[index], NULL);
 		free(philos[index]);
 		index++;
 	}
@@ -91,7 +91,7 @@ int	add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo)
 		philo[counter] = malloc(1 * sizeof(t_philo));
 		if (!philo[counter])
 		{
-			panic_free_philos(conf, philo, counter, id);
+			kill_philos(conf, philo, counter, id);
 			return (PANIC);
 		}
 		copy_conf(conf, philo[counter], nb, counter);
@@ -104,7 +104,7 @@ int	add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo)
 	}
 	else if (make_thread(philo, id, conf) == PANIC)
 	{
-		panic_free_philos(conf, philo, counter, id);
+		kill_philos(conf, philo, counter, id);
 		return (PANIC);
 	}
 	return (SUCCESS);

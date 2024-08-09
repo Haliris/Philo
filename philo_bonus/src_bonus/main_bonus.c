@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 19:08:15 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:48:07 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	parse_args(t_config *config, int ac, char **av)
 	if (check_number(ac, av) == PARSE_ERROR)
 		return (PANIC);
 	config->philos_nb = simple_atoi(av[1]);
-	if (config->philos_nb > MAX_PHILO)
+	if (config->philos_nb > MAX_PHILO || config->philos_nb == 0)
 	{
 		print_log("Number of philos above MAX_PHILO number!\n", STDERR_FILENO);
 		print_log("run 'Make MAX_PHILO=[number]'\n", STDERR_FILENO);
@@ -58,20 +58,26 @@ static int	parse_args(t_config *config, int ac, char **av)
 	return (SUCCESS);
 }
 
+
+
 int	main(int ac, char **av)
 {
 	t_config				conf;
 	t_philo					*philo_structs[MAX_PHILO];
+	sem_t					*forks;
 	pid_t					philo_ids[MAX_PHILO];
 
 	if (parse_args(&conf, ac, av) == PANIC)
 		return (EXIT_FAILURE);
 	init_config(&conf, av, ac);
+	if (open_semaphores(&forks, &conf) == PANIC)
+		return (EXIT_FAILURE);
 	if (add_philo(&conf, philo_ids, conf.philos_nb, philo_structs) == PANIC)
 	{
 		return (EXIT_FAILURE);
 	}
 	monitor_philo(philo_structs, &conf, philo_ids);
+	close_semaphores(&forks, &conf);
 	free_philos(philo_structs, &conf);
 	return (EXIT_SUCCESS);
 }

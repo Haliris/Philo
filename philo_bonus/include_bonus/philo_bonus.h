@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 19:01:39 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:48:03 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/time.h>
+# include <sys/wait.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <semaphore.h>
 # define FALSE 0
 # define TRUE 1
 # define SUCCESS 0
@@ -31,6 +35,14 @@
 #  define MAX_PHILO 200
 # endif
 
+typedef enum e_sem_error
+{
+	OK,
+	FORK_ERR,
+	PRINT_ERR,
+	DEATH_ERR,
+	ALL_ERR,
+}	t_sem_error;
 typedef struct s_philo
 {
 	int				*death;
@@ -48,7 +60,9 @@ typedef struct s_philo
 	int				think_time;
 	int				left_fork;
 	int				right_fork;
-	int				*forks_state;
+	sem_t			*forks;
+	sem_t			*death_sem;
+	sem_t			*print_sem;
 }	t_philo;
 
 typedef struct s_config
@@ -61,13 +75,17 @@ typedef struct s_config
 	int				time_to_eat;
 	int				time_to_sleep;
 	long			start_time;
-	int				forks_state[MAX_PHILO];
+	sem_t			*forks;
+	sem_t			*death_sem;
+	sem_t			*print_sem;
 }	t_config;
 
 void	print_log(char *str, int fd);
 void	throw_args_error(void);
 int		simple_atoi(const char *nptr);
 int		check_number(int ac, char **av);
+int		open_semaphores(sem_t *forks, t_config *conf);
+
 
 long	get_start_time(void);
 long	get_current_time(long start_time);

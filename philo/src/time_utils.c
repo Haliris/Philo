@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:55:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 14:36:04 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 11:53:58 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,9 @@ void	ft_usleep(t_philo *philo, int time_ms, long start_time)
 
 	sleep_time = time_ms;
 	while (get_current_time(philo->start_time) - start_time < sleep_time)
-		usleep(500);
+	{
+		if (check_stop(philo) == TRUE)
+			break ;
+		usleep(100);
+	}
 }
