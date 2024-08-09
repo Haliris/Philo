@@ -6,7 +6,7 @@
 #    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/08 19:02:17 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/09 13:59:08 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ OBJDIR = obj
 INCLUDE = -I ./include_bonus
 SRC_FILES = main_bonus.c \
 			utils_bonus.c \
+			sem_handler.c \
 			create_philos_bonus.c \
 			monitor_philos_bonus.c \
 			time_utils_bonus.c \

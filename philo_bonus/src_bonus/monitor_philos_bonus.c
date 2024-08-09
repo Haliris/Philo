@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 11:30:48 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:56:32 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@ static void	check_philo(t_philo philos, t_config *config, int *stop_run)
 	else if (curr_time - time_meal > time_die && philos.monitor_ignore == FALSE)
 	{
 		config->death = TRUE;
-		//sem
+		sem_wait(config->print_sem);
 		printf("%d %d has died.\n", curr_time, philos.number);
-		//sem
+		sem_post(config->print_sem);
 		*stop_run = TRUE;
 	}
 }
@@ -68,9 +68,9 @@ void	monitor_philo(t_philo *philo[], t_config *conf, pthread_t philo_id[])
 	stop_run = FALSE;
 	while (stop_run == FALSE)
 	{
-		//sem
+		sem_wait(conf->death_sem);
 		check_philo(*philo[index], conf, &stop_run);
-		//sem
+		sem_post(conf->death_sem);
 		if (index == conf->philos_nb - 1)
 			index = 0;
 		else
@@ -80,5 +80,4 @@ void	monitor_philo(t_philo *philo[], t_config *conf, pthread_t philo_id[])
 		}
 	}
 	wait_philos(conf, philo_id);
-	//unlink/close sem
 }

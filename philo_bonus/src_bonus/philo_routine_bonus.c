@@ -6,43 +6,43 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 19:13:20 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:58:47 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	take_fork(t_philo *philo, //sem_wait/post_t *forks)
+static void	take_fork(t_philo *philo, sem_t *forks)
 {
 	if (philo->number % 2 == 0)
 	{
-		//sem_wait/post_lock(&forks[philo->left_fork]);
+		sem_wait(forks);
 		try_to_write(philo, "has taken a fork.");
-		//sem_wait/post_lock(&forks[philo->right_fork]);
+		sem_wait(forks);
 		try_to_write(philo, "has taken a fork.");
 	}
 	else if (philo->number % 2 != 0)
 	{
-		//sem_wait/post_lock(&forks[philo->right_fork]);
+		sem_wait(forks);
 		try_to_write(philo, "has taken a fork.");
-		//sem_wait/post_lock(&forks[philo->left_fork]);
+		sem_wait(forks);
 		try_to_write(philo, "has taken a fork.");
 	}
 }
 
-static void	try_to_eat(t_philo *philo, //sem_wait/post_t *forks)
+static void	try_to_eat(t_philo *philo, sem_t *forks)
 {
 	if (philo->full_tummy == TRUE)
 		return ;
 	take_fork(philo, forks);
 	try_to_write(philo, "is eating.");
 	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
-	//sem_wait/post_lock(philo->death_lock);
+	sem_wait(philo->death_sem);
 	philo->time_since_meal = get_current_time(philo->start_time);
 	philo->meals_eaten++;
-	//sem_wait/post_unlock(philo->death_lock);
-	//sem_wait/post_unlock(&forks[philo->left_fork]);
-	//sem_wait/post_unlock(&forks[philo->right_fork]);
+	sem_post(philo->death_sem);
+	sem_post(forks);
+	sem_post(forks);
 }
 
 static void	philo_sleep(t_philo *philo)
@@ -65,25 +65,26 @@ static void	philo_think(t_philo *philo)
 		ft_usleep(philo, (time_left - philo->time_to_eat) * 0.90, timestamp);
 }
 
-void	*philo_routine(t_philo *philo)
+void	philo_routine(t_philo *philo)
 {
-	//sem_wait/post_t	*forks;
+	sem_t	*forks;
 
-	//sem_wait/post_lock(philo->death_lock);
+	forks = philo->forks;
+	sem_wait(philo->death_sem);
 	philo->time_since_meal = get_current_time(philo->start_time);
-	//sem_wait/post_unlock(philo->death_lock);
+	sem_post(philo->death_sem);
 	if (philo->number % 2 == 0)
 		usleep(500);
 	while (1)
 	{
 		if (check_stop(philo) == TRUE)
-			return (NULL);
+			exit(EXIT_SUCCESS);
 		try_to_eat(philo, forks);
 		if (check_stop(philo) == TRUE)
-			return (NULL);
+			exit(EXIT_SUCCESS);
 		philo_sleep(philo);
 		if (check_stop(philo) == TRUE)
-			return (NULL);
+			exit(EXIT_SUCCESS);
 		philo_think(philo);
 	}
 }

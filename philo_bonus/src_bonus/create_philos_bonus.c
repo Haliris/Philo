@@ -6,13 +6,13 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:46:51 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:59:52 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	panic_free_philos(t_philo **philos, int n, pid_t id[], t_conf *conf)
+static void	panic_free_philos(t_philo **philos, int n, pid_t id[], t_config *conf)
 {
 	int	index;
 
@@ -33,9 +33,9 @@ static void	wait_philos_panic(int nb, pid_t ids[], t_config *config)
 
 	index = 0;
 
-	//sem
+	sem_wait(config->death_sem);
 	config->death = TRUE;
-	//sem
+	sem_post(config->death_sem);
 	while (index > nb)
 	{
 		waitpid(ids[index], NULL, 0);
@@ -61,20 +61,17 @@ static int	make_fork(t_philo **philos, pthread_t philo_ids[], t_config *conf)
 		}
 		if (child_id == 0)
 			philo_routine(philos[index]);
-		philo_ids[index] = child_id;
-		index++;
+		else
+		{
+			philo_ids[index] = child_id;
+			index++;
+		}
 	}
 	return (SUCCESS);
 }
 
-static void	copy_conf(t_config *conf, t_philo *philos, int philos_nb, int count)
+static void	copy_conf(t_config *conf, t_philo *philos, int philos_nb)
 {
-	if (count == 0)
-		philos->left_fork = philos_nb - 1;
-	else
-		philos->left_fork = count - 1;
-	philos->right_fork = count;
-	philos->number = count + 1;
 	philos->forks = conf->forks;
 	philos->print_sem = &conf->print_sem;
 	philos->time_to_eat = conf->time_to_eat;
@@ -100,7 +97,7 @@ int	add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo)
 			panic_free_philos(philo, counter, id, conf);
 			return (PANIC);
 		}
-		copy_conf(conf, philo[counter], nb, counter);
+		copy_conf(conf, philo[counter], nb);
 		counter++;
 	}
 	if (make_fork(philo, id, conf) == PANIC)

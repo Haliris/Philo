@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:48:07 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:59:14 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ static int	parse_args(t_config *config, int ac, char **av)
 	}
 	return (SUCCESS);
 }
-
-
 
 int	main(int ac, char **av)
 {

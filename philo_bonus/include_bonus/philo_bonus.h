@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:48:03 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:54:57 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ typedef struct s_philo
 	int				meals_eaten;
 	int				*eating;
 	int				think_time;
-	int				left_fork;
-	int				right_fork;
 	sem_t			*forks;
 	sem_t			*death_sem;
 	sem_t			*print_sem;
