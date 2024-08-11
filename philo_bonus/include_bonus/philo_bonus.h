@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 17:36:39 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/11 15:43:01 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # define LOCKED 1
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
+# define EXIT_DEATH 3
 # ifndef MAX_PHILO
 #  define MAX_PHILO 200
 # endif
@@ -42,10 +43,20 @@ typedef enum e_sem_error
 	FORK_ERR,
 	PRINT_ERR,
 	DEATH_ERR,
+	CHECK_ERR,
 }	t_sem_error;
+
+typedef struct s_monitor
+{
+	pid_t	pid;
+	sem_t	*print_sem;
+	sem_t	*death_sem;
+}	t_monitor;
+
 typedef struct s_philo
 {
 	int				dead;
+	int				kill_switch;
 	int				full_tummy;
 	int				monitor_ignore;
 	long			start_time;
@@ -56,11 +67,11 @@ typedef struct s_philo
 	int				time_since_meal;
 	int				meals_nb;
 	int				meals_eaten;
-	int				*eating;
 	int				think_time;
 	sem_t			*forks;
 	sem_t			*death_sem;
 	sem_t			*print_sem;
+	sem_t			*check_sem;
 }	t_philo;
 
 typedef struct s_config
@@ -77,6 +88,7 @@ typedef struct s_config
 	sem_t			*forks;
 	sem_t			*death_sem;
 	sem_t			*print_sem;
+	sem_t			*check_sem;
 }	t_config;
 
 void	print_log(char *str, int fd);
@@ -91,10 +103,11 @@ long	get_start_time(void);
 long	get_current_time(long start_time);
 void	ft_usleep(t_philo *philo, int time_ms, long start_time);
 
-int		add_philo(t_config *conf, pid_t id[], int nb, t_philo **philo);
+int		add_philo(t_config *conf, pid_t id[], int nb);
 void	philo_routine(t_philo *philo);
 void	monitor_philo(t_config *conf, pid_t philo_id[]);
 
 void	try_to_write(t_philo *philo, char *message);
+void	do_routine(t_philo *philo, sem_t *forks);
 
 #endif

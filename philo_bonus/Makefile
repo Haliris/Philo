@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
+#    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/09 13:59:08 by jteissie         ###   ########.fr        #
+#    Updated: 2024/08/11 13:08:05 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = cc
 
 MAX_PHILO = 200
 
-CCFLAGS = -Wall -Wextra -Werror -g3 -DMAX_PHILO=$(MAX_PHILO)
+CCFLAGS = -Wall -Wextra -Werror -g3 -DMAX_PHILO=$(MAX_PHILO) -pthread
 
 SRCDIR = src
 OBJDIR = obj
@@ -28,7 +28,7 @@ SRC_FILES = main_bonus.c \
 			monitor_philos_bonus.c \
 			time_utils_bonus.c \
 			philo_routine_bonus.c \
-			philo_routine_utils_bonus.c \
+			philo_routine_handler.c \
 
 vpath %.c ./ src_bonus/
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 16:55:40 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/09 20:06:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,6 @@ static void	init_config(t_config *config, char **av, int ac)
 		config->meals_nb = simple_atoi(av[5]);
 	else
 		config->meals_nb = -1;
-}
-
-static void	free_philos(t_philo **philo_structs, t_config *config)
-{
-	int	index;
-
-	index = 0;
-	while (index < config->philos_nb)
-	{
-		free(philo_structs[index]);
-		index++;
-	}
-	philo_structs = NULL;
 }
 
 static int	parse_args(t_config *config, int ac, char **av)
@@ -62,7 +49,6 @@ static int	parse_args(t_config *config, int ac, char **av)
 int	main(int ac, char **av)
 {
 	t_config				conf;
-	t_philo					*philo_structs[MAX_PHILO];
 	pid_t					philo_ids[MAX_PHILO];
 
 	if (parse_args(&conf, ac, av) == PANIC)
@@ -70,15 +56,13 @@ int	main(int ac, char **av)
 	init_config(&conf, av, ac);
 	if (open_semaphores(&conf) == PANIC)
 		return (EXIT_FAILURE);
-	if (add_philo(&conf, philo_ids, conf.philos_nb, philo_structs) == PANIC)
+	sem_wait(conf.death_sem);
+	if (add_philo(&conf, philo_ids, conf.philos_nb) == PANIC)
 	{
 		close_semaphores(&conf);
 		return (EXIT_FAILURE);
 	}
 	monitor_philo(&conf, philo_ids);
 	close_semaphores(&conf);
-	free_philos(philo_structs, &conf);
 	return (EXIT_SUCCESS);
 }
-
-// FREE MEMORY IN CHILDREN ??
