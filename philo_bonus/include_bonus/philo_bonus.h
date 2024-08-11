@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 15:43:01 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/11 18:09:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,19 @@ typedef enum e_sem_error
 	OK,
 	FORK_ERR,
 	PRINT_ERR,
-	DEATH_ERR,
 	CHECK_ERR,
 }	t_sem_error;
 
 typedef struct s_monitor
 {
 	pid_t	pid;
+	pid_t	*pid_array;
+	int		philo_number;
 	sem_t	*print_sem;
-	sem_t	*death_sem;
 }	t_monitor;
 
 typedef struct s_philo
 {
-	int				dead;
-	int				kill_switch;
 	int				full_tummy;
 	int				monitor_ignore;
 	long			start_time;
@@ -69,7 +67,6 @@ typedef struct s_philo
 	int				meals_eaten;
 	int				think_time;
 	sem_t			*forks;
-	sem_t			*death_sem;
 	sem_t			*print_sem;
 	sem_t			*check_sem;
 }	t_philo;
@@ -86,7 +83,6 @@ typedef struct s_config
 	long			start_time;
 	pid_t			*philo_id;
 	sem_t			*forks;
-	sem_t			*death_sem;
 	sem_t			*print_sem;
 	sem_t			*check_sem;
 }	t_config;

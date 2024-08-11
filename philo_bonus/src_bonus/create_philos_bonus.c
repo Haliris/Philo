@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 15:32:26 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/11 18:08:54 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,10 @@ static int	make_fork(t_philo *philos, pid_t philo_ids[], t_config *conf)
 
 static void	copy_conf(t_config *conf, t_philo *philos, int index)
 {
-	philos->dead = FALSE;
-	philos->kill_switch = FALSE;
 	philos->full_tummy = FALSE;
 	philos->number = index + 1;
 	philos->print_sem = conf->print_sem;
 	philos->forks = conf->forks;
-	philos->death_sem = conf->death_sem;
 	philos->check_sem = conf->check_sem;
 	philos->time_to_eat = conf->time_to_eat;
 	philos->death_time = conf->time_to_die;

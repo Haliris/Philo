@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:55:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 16:42:02 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/11 18:09:17 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,5 @@ void	ft_usleep(t_philo *philo, int time_ms, long start_time)
 
 	sleep_time = time_ms;
 	while (get_current_time(philo->start_time) - start_time < sleep_time)
-	{
-		sem_wait(philo->check_sem);
-		{
-			if (philo->kill_switch == TRUE)
-				break ;
-		}
-		sem_post(philo->check_sem);
 		usleep(500);
-	}
 }

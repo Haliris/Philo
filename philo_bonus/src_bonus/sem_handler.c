@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 13:43:42 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 16:33:57 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/11 17:30:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,12 @@ static void	panic_close_sem(t_config *conf, t_sem_error err)
 		sem_close(conf->forks);
 		sem_unlink("/forks");
 	}
-	else if (err == DEATH_ERR)
-	{
-		sem_close(conf->forks);
-		sem_unlink("/forks");
-		sem_close(conf->print_sem);
-		sem_unlink("/print");
-	}
 	else if (err == CHECK_ERR)
 	{
 		sem_close(conf->forks);
 		sem_unlink("/forks");
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
-		sem_close(conf->death_sem);
-		sem_unlink("/death");
 	}
 }
 
@@ -41,7 +32,6 @@ static void	unlink_prev_sems(void)
 {
 	sem_unlink("/forks");
 	sem_unlink("/print");
-	sem_unlink("/death");
 	sem_unlink("/check");
 }
 
@@ -49,8 +39,6 @@ void	close_semaphores(t_config *conf)
 {
 	sem_close(conf->forks);
 	sem_unlink("/forks");
-	sem_close(conf->death_sem);
-	sem_unlink("/death");
 	sem_close(conf->print_sem);
 	sem_unlink("/print");
 	sem_close(conf->check_sem);
@@ -71,12 +59,6 @@ int	open_semaphores(t_config *conf)
 		conf->print_sem = sem_open("/print", O_CREAT, 0644, 1);
 		if (conf->print_sem == SEM_FAILED)
 			status = PRINT_ERR;
-	}
-	if (status == OK)
-	{
-		conf->death_sem = sem_open("/death", O_CREAT, 0644, 1);
-		if (conf->death_sem == SEM_FAILED)
-			status = DEATH_ERR;
 	}
 	if (status == OK)
 	{
