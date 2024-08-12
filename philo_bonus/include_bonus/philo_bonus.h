@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 18:09:00 by marvin           ###   ########.fr       */
+/*   Created: 2024/08/12 17:40:43 by jteissie          #+#    #+#             */
+/*   Updated: 2024/08/12 17:49:46 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 # include <unistd.h>
 # include <pthread.h>
 # include <string.h>
@@ -93,7 +93,6 @@ int		simple_atoi(const char *nptr);
 int		check_number(int ac, char **av);
 int		open_semaphores(t_config *conf);
 void	close_semaphores(t_config *conf);
-
 
 long	get_start_time(void);
 long	get_current_time(long start_time);

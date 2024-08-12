@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:03:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 14:29:32 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:39:18 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	take_fork(t_philo *philo, sem_t *forks)
 		sem_wait(forks);
 		try_to_write(philo, "has taken a fork.");
 	}
-	else if (philo->number % 2 != 0)
+	else
 	{
 		sem_wait(forks);
 		try_to_write(philo, "has taken a fork.");
@@ -78,5 +78,4 @@ void	do_routine(t_philo *philo, sem_t *forks)
 			break ;
 		}
 	}
-	// usleep(1000);
 }

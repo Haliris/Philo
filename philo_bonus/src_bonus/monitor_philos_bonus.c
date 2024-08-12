@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 11:36:57 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:43:01 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,12 @@ static void	*wait_philos(void *arg)
 	return (NULL);
 }
 
-static void	copy_conf_monitor(t_monitor *monitor, t_config *conf, pid_t pid, pid_t *pid_array)
+static void	monitor_cpy(t_monitor *m, t_config *conf, pid_t pid, pid_t *array)
 {
-	monitor->pid = pid;
-	monitor->pid_array = pid_array;
-	monitor->print_sem = conf->print_sem;
-	monitor->philo_number = conf->philos_nb;
+	m->pid = pid;
+	m->pid_array = array;
+	m->print_sem = conf->print_sem;
+	m->philo_number = conf->philos_nb;
 }
 
 void	monitor_philo(t_config *conf, pid_t philo_id[])
@@ -59,7 +59,7 @@ void	monitor_philo(t_config *conf, pid_t philo_id[])
 	memset(&threads, 0, MAX_PHILO * sizeof(pthread_t));
 	while (index < conf->philos_nb)
 	{
-		copy_conf_monitor(&monitor[index], conf, philo_id[index], philo_id);
+		monitor_cpy(&monitor[index], conf, philo_id[index], philo_id);
 		if (pthread_create(&threads[index], NULL,
 				wait_philos, &monitor[index]) != 0)
 			return ;

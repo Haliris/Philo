@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 11:49:23 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:47:52 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,28 +31,34 @@ static void	exit_child(t_philo *philo, int code)
 	exit(code);
 }
 
-static void	*check_stop(void *arg)
+static void	check_death(t_philo *philo)
 {
-	t_philo	*philo;
 	int		curr_time;
 	int		time_meal;
 	int		time_die;
 
-	philo = (t_philo *)arg;
 	time_die = philo->death_time;
+	curr_time = get_current_time(philo->start_time);
+	time_meal = philo->time_since_meal;
+	if (curr_time - time_meal > time_die)
+	{
+		sem_wait(philo->print_sem);
+		printf("%d %d died.\n", curr_time, philo->number);
+		sem_post(philo->print_sem);
+		sem_post(philo->check_sem);
+		exit_child(philo, EXIT_DEATH);
+	}
+}
+
+static void	*check_stop(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
 	while (TRUE)
 	{
 		sem_wait(philo->check_sem);
-		curr_time = get_current_time(philo->start_time);
-		time_meal = philo->time_since_meal;
-		if (curr_time - time_meal > time_die)
-		{
-			sem_wait(philo->print_sem);
-			printf("%d %d died.\n", curr_time, philo->number);
-			sem_post(philo->print_sem);
-			sem_post(philo->check_sem);
-			exit_child(philo, EXIT_DEATH);
-		}
+		check_death(philo);
 		if (philo->full_tummy == TRUE)
 		{
 			sem_post(philo->check_sem);

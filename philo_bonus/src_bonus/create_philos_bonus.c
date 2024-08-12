@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_philos_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 18:08:54 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/12 17:40:54 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ static void	kill_philos_panic(int nb, pid_t ids[])
 	int	index;
 
 	index = 0;
-
 	while (index < nb)
 	{
 		kill(ids[index], SIGKILL);
