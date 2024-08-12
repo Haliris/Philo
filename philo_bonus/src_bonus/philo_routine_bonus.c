@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 19:55:08 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:02:12 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,8 @@ void	try_to_write(t_philo *philo, char *message)
 
 static void	exit_child(t_philo *philo, int code)
 {
-	if (code == EXIT_DEATH)
-	{
-		//"free" the monitoring thread
-	}
+	philo->stop_program = TRUE;
+	usleep(2000);
 	sem_close(philo->print_sem);
 	sem_close(philo->check_sem);
 	sem_close(philo->forks);
@@ -54,35 +52,20 @@ static void	check_death(t_philo *philo)
 	}
 }
 
-void	*stop_program(void *arg)
-{
-	t_philo	*philo;
-
-	philo = (t_philo *)arg;
-	sem_wait(philo->stop_sem);
-	printf("stop_program set to true\n");
-	philo->stop_program = TRUE;
-	return (NULL);
-}
-
 static void	*check_stop(void *arg)
 {
 	t_philo		*philo;
-	pthread_t	stop_monitor;
 	int			stop;
 
 	philo = (t_philo *)arg;
 	stop = philo->stop_program;
-	if (pthread_create(&stop_monitor, NULL, stop_program, philo) != 0)
-		return (NULL);
-	pthread_detach(stop_monitor);
 	while (stop == FALSE)
 	{
 		if (stop == TRUE)
-			exit(EXIT_SUCCESS);
+			return (NULL);
 		sem_wait(philo->check_sem);
 		if (stop == TRUE)
-			exit(EXIT_SUCCESS);
+			return (NULL);
 		check_death(philo);
 		if (philo->full_tummy == TRUE)
 		{
@@ -91,24 +74,49 @@ static void	*check_stop(void *arg)
 		}
 		sem_post(philo->check_sem);
 		if (stop == TRUE)
-			exit(EXIT_SUCCESS);
-		usleep(1000);
+			return (NULL);
+		usleep(500);
 	}
 	return (NULL);
+}
+
+static void	*check_tummy(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	if (philo->meals_nb == -1)
+		return (NULL);
+	while (TRUE)
+	{
+		sem_wait(philo->check_sem);
+		if (philo->meals_eaten == philo->meals_nb)
+		{
+			sem_post(philo->meal_sem);
+			sem_post(philo->check_sem);
+			return (NULL);
+		}
+		sem_post(philo->check_sem);
+		usleep(1000);
+	}
 }
 
 void	philo_routine(t_philo *philo)
 {
 	sem_t		*forks;
+	pthread_t	meal_check;
 	pthread_t	monitor;
 
 	forks = philo->forks;
-	philo->time_since_meal = get_current_time(philo->start_time);
 	monitor = 0;
-	check_sem_name = ft_itoa(philo->number); //check_sem naming logic
+	meal_check = 0;
+	philo->time_since_meal = get_current_time(philo->start_time);
 	if (pthread_create(&monitor, NULL, check_stop, philo) != 0)
 		exit(EXIT_FAILURE);
+	if (pthread_create(&meal_check, NULL, check_tummy, philo) != 0)
+		exit(EXIT_FAILURE);
 	pthread_detach(monitor);
+	pthread_detach(meal_check);
 	if (philo->number % 2 == 0)
 		usleep((philo->time_to_eat / 2) * 1000);
 	do_routine(philo, forks);

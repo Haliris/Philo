@@ -3,44 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_philos_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 19:50:56 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 23:57:42 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	kill_processes(t_monitor *monitor)
+static void	kill_processes(int philo_number, pid_t *pids, int ignore)
 {
 	int		index;
-	int		philo_number;
-	pid_t	*pids;
 
 	index = 0;
-	philo_number = monitor->philo_number;
-	pids = monitor->pid_array;
 	while (index < philo_number)
 	{
-		if (index == value)
+		if (index == ignore)
 		{
 			index++;
-			continue ;
+		 	continue ;
 		}
-		kill(pids[index], SIGTERM); // do not kill the process that caused the kill_processes function
-		index++;
-	}
-	index = 0;
-	while (index < philo_number)
-	{
-		sem_post(monitor->stop_sem);
-		index++;
-	}
-	index = 0;
-	while (index < philo_number)
-	{
-		sem_post(monitor->check_sem);
+		kill(pids[index], SIGTERM);
 		index++;
 	}
 }
@@ -56,7 +40,7 @@ static void	*wait_philos(void *arg)
 	if (WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == EXIT_DEATH)
-			kill_processes(monitor);
+			kill_processes(monitor->philo_number, monitor->pid_array, monitor->index);
 	}
 	return (NULL);
 }
@@ -66,23 +50,46 @@ static void	monitor_cpy(t_monitor *m, t_config *conf, pid_t pid, pid_t *array)
 	m->pid = pid;
 	m->pid_array = array;
 	m->print_sem = conf->print_sem;
-	m->stop_sem = conf->stop_sem;
+	m->meal_sem = conf->meal_sem;
 	m->check_sem = conf->check_sem;
 	m->philo_number = conf->philos_nb;
+}
+
+static void	*meal_monitor(void *arg)
+{
+	t_config	*config;
+	int			full_philos;
+
+	config = (t_config *)arg;
+	full_philos = 0;
+	if (config->meals_nb == -1)
+		return (NULL);
+	while (full_philos < config->philos_nb)
+	{
+		sem_wait(config->meal_sem);
+		full_philos++;
+	}
+	kill_processes(config->philos_nb, config->pid_array, -1);
+	return (NULL);
 }
 
 void	monitor_philo(t_config *conf, pid_t philo_id[])
 {
 	t_monitor	monitor[MAX_PHILO];
 	pthread_t	threads[MAX_PHILO];
+	pthread_t	meal_check;
 	int			index;
 
 	index = 0;
 	memset(&monitor, 0, MAX_PHILO * sizeof(t_monitor));
 	memset(&threads, 0, MAX_PHILO * sizeof(pthread_t));
+	if (pthread_create(&meal_check, NULL, meal_monitor, conf) != 0)
+		return ;
+	pthread_detach(meal_check);
 	while (index < conf->philos_nb)
 	{
 		monitor_cpy(&monitor[index], conf, philo_id[index], philo_id);
+		monitor[index].index = index;
 		if (pthread_create(&threads[index], NULL,
 				wait_philos, &monitor[index]) != 0)
 			return ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_philos_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 19:09:18 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 23:14:16 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	copy_conf(t_config *conf, t_philo *philos, int index)
 	philos->print_sem = conf->print_sem;
 	philos->forks = conf->forks;
 	philos->check_sem = conf->check_sem;
-	philos->stop_sem = conf->stop_sem;
+	philos->meal_sem = conf->meal_sem;
 	philos->time_to_eat = conf->time_to_eat;
 	philos->death_time = conf->time_to_die;
 	philos->time_to_sleep = conf->time_to_sleep;
@@ -66,18 +66,6 @@ static void	copy_conf(t_config *conf, t_philo *philos, int index)
 	philos->meals_eaten = 0;
 	philos->monitor_ignore = FALSE;
 	philos->stop_program = FALSE;
-}
-
-static void	reserve_stop_sems(t_config *conf)
-{
-	int	index;
-
-	index = 0;
-	while (index < conf->philos_nb)
-	{
-		sem_wait(conf->stop_sem);
-		index++;
-	}
 }
 
 int	add_philo(t_config *conf, pid_t id[], int nb)
@@ -92,7 +80,6 @@ int	add_philo(t_config *conf, pid_t id[], int nb)
 		copy_conf(conf, &philo[counter], counter);
 		counter++;
 	}
-	reserve_stop_sems(conf);
 	if (make_fork(philo, id, conf) == PANIC)
 	{
 		kill_philos_panic(conf->philos_nb, id);

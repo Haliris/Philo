@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sem_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 13:43:42 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 19:22:04 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 23:25:55 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	panic_close_sem(t_config *conf, t_sem_error err)
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
 	}
-	else if (err == STOP_ERR)
+	else if (err == MEAL_ERR)
 	{
 		sem_close(conf->forks);
 		sem_unlink("/forks");
@@ -42,7 +42,7 @@ static void	unlink_prev_sems(void)
 	sem_unlink("/forks");
 	sem_unlink("/print");
 	sem_unlink("/check");
-	sem_unlink("/stop");
+	sem_unlink("/meal");
 }
 
 void	close_semaphores(t_config *conf)
@@ -52,7 +52,7 @@ void	close_semaphores(t_config *conf)
 	index = 0;
 	while (index < conf->philos_nb)
 	{
-		sem_post(conf->stop_sem);
+		sem_post(conf->meal_sem);
 		sem_post(conf->check_sem);
 		usleep(5000);
 		index++;
@@ -63,8 +63,8 @@ void	close_semaphores(t_config *conf)
 	sem_unlink("/print");
 	sem_close(conf->check_sem);
 	sem_unlink("/check");
-	sem_close(conf->stop_sem);
-	sem_unlink("/stop");
+	sem_close(conf->meal_sem);
+	sem_unlink("/meal");
 }
 
 int	open_semaphores(t_config *conf)
@@ -90,9 +90,9 @@ int	open_semaphores(t_config *conf)
 	}
 	if (status == OK)
 	{
-		conf->stop_sem = sem_open("/stop", O_CREAT, 0644, conf->philos_nb);
-		if (conf->stop_sem == SEM_FAILED)
-			status = STOP_ERR;
+		conf->meal_sem = sem_open("/meal", O_CREAT, 0644, 0);
+		if (conf->meal_sem == SEM_FAILED)
+			status = MEAL_ERR;
 	}
 	if (status != OK)
 	{

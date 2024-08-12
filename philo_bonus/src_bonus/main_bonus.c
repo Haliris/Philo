@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 18:55:38 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 23:19:20 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	main(int ac, char **av)
 		close_semaphores(&conf);
 		return (EXIT_FAILURE);
 	}
+	conf.pid_array = philo_ids;
 	monitor_philo(&conf, philo_ids);
 	close_semaphores(&conf);
 	return (EXIT_SUCCESS);
