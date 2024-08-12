@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 17:47:52 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 19:55:08 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@ void	try_to_write(t_philo *philo, char *message)
 
 static void	exit_child(t_philo *philo, int code)
 {
+	if (code == EXIT_DEATH)
+	{
+		//"free" the monitoring thread
+	}
 	sem_close(philo->print_sem);
 	sem_close(philo->check_sem);
 	sem_close(philo->forks);
@@ -50,14 +54,35 @@ static void	check_death(t_philo *philo)
 	}
 }
 
-static void	*check_stop(void *arg)
+void	*stop_program(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (TRUE)
+	sem_wait(philo->stop_sem);
+	printf("stop_program set to true\n");
+	philo->stop_program = TRUE;
+	return (NULL);
+}
+
+static void	*check_stop(void *arg)
+{
+	t_philo		*philo;
+	pthread_t	stop_monitor;
+	int			stop;
+
+	philo = (t_philo *)arg;
+	stop = philo->stop_program;
+	if (pthread_create(&stop_monitor, NULL, stop_program, philo) != 0)
+		return (NULL);
+	pthread_detach(stop_monitor);
+	while (stop == FALSE)
 	{
+		if (stop == TRUE)
+			exit(EXIT_SUCCESS);
 		sem_wait(philo->check_sem);
+		if (stop == TRUE)
+			exit(EXIT_SUCCESS);
 		check_death(philo);
 		if (philo->full_tummy == TRUE)
 		{
@@ -65,6 +90,8 @@ static void	*check_stop(void *arg)
 			return (NULL);
 		}
 		sem_post(philo->check_sem);
+		if (stop == TRUE)
+			exit(EXIT_SUCCESS);
 		usleep(1000);
 	}
 	return (NULL);
@@ -78,6 +105,7 @@ void	philo_routine(t_philo *philo)
 	forks = philo->forks;
 	philo->time_since_meal = get_current_time(philo->start_time);
 	monitor = 0;
+	check_sem_name = ft_itoa(philo->number); //check_sem naming logic
 	if (pthread_create(&monitor, NULL, check_stop, philo) != 0)
 		exit(EXIT_FAILURE);
 	pthread_detach(monitor);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 17:30:33 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/12 18:55:38 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ static int	parse_args(t_config *config, int ac, char **av)
 
 int	main(int ac, char **av)
 {
-	t_config				conf;
-	pid_t					philo_ids[MAX_PHILO];
+	t_config	conf;
+	pid_t		philo_ids[MAX_PHILO];
 
 	if (parse_args(&conf, ac, av) == PANIC)
 		return (EXIT_FAILURE);

@@ -6,20 +6,41 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 17:43:01 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 19:50:56 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	kill_processes(pid_t *pids, int philo_number)
+static void	kill_processes(t_monitor *monitor)
 {
-	int	index;
+	int		index;
+	int		philo_number;
+	pid_t	*pids;
 
+	index = 0;
+	philo_number = monitor->philo_number;
+	pids = monitor->pid_array;
+	while (index < philo_number)
+	{
+		if (index == value)
+		{
+			index++;
+			continue ;
+		}
+		kill(pids[index], SIGTERM); // do not kill the process that caused the kill_processes function
+		index++;
+	}
 	index = 0;
 	while (index < philo_number)
 	{
-		kill(pids[index], SIGKILL);
+		sem_post(monitor->stop_sem);
+		index++;
+	}
+	index = 0;
+	while (index < philo_number)
+	{
+		sem_post(monitor->check_sem);
 		index++;
 	}
 }
@@ -35,7 +56,7 @@ static void	*wait_philos(void *arg)
 	if (WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == EXIT_DEATH)
-			kill_processes(monitor->pid_array, monitor->philo_number);
+			kill_processes(monitor);
 	}
 	return (NULL);
 }
@@ -45,6 +66,8 @@ static void	monitor_cpy(t_monitor *m, t_config *conf, pid_t pid, pid_t *array)
 	m->pid = pid;
 	m->pid_array = array;
 	m->print_sem = conf->print_sem;
+	m->stop_sem = conf->stop_sem;
+	m->check_sem = conf->check_sem;
 	m->philo_number = conf->philos_nb;
 }
 

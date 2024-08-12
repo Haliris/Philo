@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sem_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 13:43:42 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 17:30:02 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/12 19:22:04 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,15 @@ static void	panic_close_sem(t_config *conf, t_sem_error err)
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
 	}
+	else if (err == STOP_ERR)
+	{
+		sem_close(conf->forks);
+		sem_unlink("/forks");
+		sem_close(conf->print_sem);
+		sem_unlink("/print");
+		sem_close(conf->check_sem);
+		sem_unlink("/check");
+	}
 }
 
 static void	unlink_prev_sems(void)
@@ -33,16 +42,29 @@ static void	unlink_prev_sems(void)
 	sem_unlink("/forks");
 	sem_unlink("/print");
 	sem_unlink("/check");
+	sem_unlink("/stop");
 }
 
 void	close_semaphores(t_config *conf)
 {
+	int	index;
+
+	index = 0;
+	while (index < conf->philos_nb)
+	{
+		sem_post(conf->stop_sem);
+		sem_post(conf->check_sem);
+		usleep(5000);
+		index++;
+	}
 	sem_close(conf->forks);
 	sem_unlink("/forks");
 	sem_close(conf->print_sem);
 	sem_unlink("/print");
 	sem_close(conf->check_sem);
 	sem_unlink("/check");
+	sem_close(conf->stop_sem);
+	sem_unlink("/stop");
 }
 
 int	open_semaphores(t_config *conf)
@@ -65,6 +87,12 @@ int	open_semaphores(t_config *conf)
 		conf->check_sem = sem_open("/check", O_CREAT, 0644, 1);
 		if (conf->check_sem == SEM_FAILED)
 			status = CHECK_ERR;
+	}
+	if (status == OK)
+	{
+		conf->stop_sem = sem_open("/stop", O_CREAT, 0644, conf->philos_nb);
+		if (conf->stop_sem == SEM_FAILED)
+			status = STOP_ERR;
 	}
 	if (status != OK)
 	{
