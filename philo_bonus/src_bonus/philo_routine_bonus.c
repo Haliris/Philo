@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 00:02:12 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 00:21:38 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ static void	exit_child(t_philo *philo, int code)
 {
 	philo->stop_program = TRUE;
 	usleep(2000);
-	sem_close(philo->print_sem);
-	sem_close(philo->check_sem);
-	sem_close(philo->forks);
+	// sem_close(philo->print_sem);
+	// sem_close(philo->check_sem);
+	// sem_close(philo->forks);
 	exit(code);
 }
 
