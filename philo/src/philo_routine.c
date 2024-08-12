@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 11:24:11 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:36:57 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ static void	try_to_eat(t_philo *philo, pthread_mutex_t *forks)
 		return ;
 	take_fork(philo, forks);
 	try_to_write(philo, "is eating.");
-	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
 	pthread_mutex_lock(philo->death_lock);
 	philo->time_since_meal = get_current_time(philo->start_time);
 	philo->meals_eaten++;
 	pthread_mutex_unlock(philo->death_lock);
+	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
 	pthread_mutex_unlock(&forks[philo->left_fork]);
 	pthread_mutex_unlock(&forks[philo->right_fork]);
 }

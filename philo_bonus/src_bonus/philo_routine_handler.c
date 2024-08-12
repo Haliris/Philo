@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:03:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 18:39:55 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/12 14:29:32 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ static void	take_fork(t_philo *philo, sem_t *forks)
 static void	try_to_eat(t_philo *philo, sem_t *forks)
 {
 	take_fork(philo, forks);
-	try_to_write(philo, "is eating.");
-	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
 	sem_wait(philo->check_sem);
 	philo->time_since_meal = get_current_time(philo->start_time);
 	philo->meals_eaten++;
 	sem_post(philo->check_sem);
+	try_to_write(philo, "is eating.");
+	ft_usleep(philo, philo->time_to_eat, get_current_time(philo->start_time));
 	sem_post(forks);
 	sem_post(forks);
 }
@@ -78,5 +78,5 @@ void	do_routine(t_philo *philo, sem_t *forks)
 			break ;
 		}
 	}
-	usleep(1000);
+	// usleep(1000);
 }

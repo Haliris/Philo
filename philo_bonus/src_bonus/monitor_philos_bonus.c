@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_philos_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 18:28:53 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/12 11:36:57 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ void	monitor_philo(t_config *conf, pid_t philo_id[])
 	memset(&threads, 0, MAX_PHILO * sizeof(pthread_t));
 	while (index < conf->philos_nb)
 	{
-		copy_conf_monitor(&monitor[index], conf, philo_id[index], philo_id);	
-		if (pthread_create(&threads[index], NULL, 
+		copy_conf_monitor(&monitor[index], conf, philo_id[index], philo_id);
+		if (pthread_create(&threads[index], NULL,
 				wait_philos, &monitor[index]) != 0)
 			return ;
 		index++;
