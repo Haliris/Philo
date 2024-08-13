@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 14:33:20 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:29:44 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,17 @@ static void	*wait_philos(void *arg)
 	waitpid(monitor->pid, &status, 0);
 	if (WIFEXITED(status))
 	{
-		if (WEXITSTATUS(status) == EXIT_DEATH)
+		sem_wait(monitor->check_sem);
+		if (WEXITSTATUS(status) == EXIT_DEATH && *monitor->stop_simulation == FALSE)
+		{
+			*monitor->stop_simulation = TRUE;
+			sem_wait(monitor->death_sem);
+			sem_post(monitor->check_sem);
 			kill_processes(monitor->philo_number,
 				monitor->pid_array, monitor->index);
+			return (NULL);
+		}
+		sem_post(monitor->check_sem);
 	}
 	return (NULL);
 }
@@ -54,6 +62,8 @@ static void	monitor_cpy(t_monitor *m, t_config *conf, pid_t pid, pid_t *array)
 	m->meal_sem = conf->meal_sem;
 	m->check_sem = conf->check_sem;
 	m->philo_number = conf->philos_nb;
+	m->death_sem = conf->death_sem;
+	m->stop_simulation = &conf->stop_simulation;
 }
 
 static void	*meal_monitor(void *arg)

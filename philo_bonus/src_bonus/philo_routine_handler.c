@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:03:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 17:39:18 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:14:51 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ static void	take_fork(t_philo *philo, sem_t *forks)
 
 static void	try_to_eat(t_philo *philo, sem_t *forks)
 {
+	sem_wait(philo->death_sem);
+	sem_post(philo->death_sem);
 	take_fork(philo, forks);
 	sem_wait(philo->check_sem);
 	philo->time_since_meal = get_current_time(philo->start_time);

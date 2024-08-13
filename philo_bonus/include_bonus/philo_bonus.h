@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:40:43 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 14:37:02 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:19:32 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef enum e_sem_error
 	PRINT_ERR,
 	CHECK_ERR,
 	MEAL_ERR,
+	DEATH_ERR,
 }	t_sem_error;
 
 typedef struct s_monitor
@@ -52,9 +53,11 @@ typedef struct s_monitor
 	pid_t	*pid_array;
 	int		philo_number;
 	int		index;
+	int		*stop_simulation;
 	sem_t	*print_sem;
 	sem_t	*check_sem;
 	sem_t	*meal_sem;
+	sem_t	*death_sem;
 }	t_monitor;
 
 typedef struct s_philo
@@ -75,6 +78,7 @@ typedef struct s_philo
 	sem_t			*print_sem;
 	sem_t			*check_sem;
 	sem_t			*meal_sem;
+	sem_t			*death_sem;
 }	t_philo;
 
 typedef struct s_config
@@ -82,6 +86,7 @@ typedef struct s_config
 	pid_t			*pid_array;
 	int				death;
 	int				full_philos;
+	int				stop_simulation;
 	int				meals_nb;
 	int				philos_nb;
 	int				time_to_die;
@@ -93,6 +98,7 @@ typedef struct s_config
 	sem_t			*print_sem;
 	sem_t			*check_sem;
 	sem_t			*meal_sem;
+	sem_t			*death_sem;
 }	t_config;
 
 void	print_log(char *str, int fd);

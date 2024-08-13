@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_philos_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 23:14:16 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 15:14:04 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static void	copy_conf(t_config *conf, t_philo *philos, int index)
 	philos->forks = conf->forks;
 	philos->check_sem = conf->check_sem;
 	philos->meal_sem = conf->meal_sem;
+	philos->death_sem = conf->death_sem;
 	philos->time_to_eat = conf->time_to_eat;
 	philos->death_time = conf->time_to_die;
 	philos->time_to_sleep = conf->time_to_sleep;
