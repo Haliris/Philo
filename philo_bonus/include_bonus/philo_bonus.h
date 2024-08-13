@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:40:43 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 15:19:32 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:40:47 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef enum e_sem_error
 
 typedef struct s_monitor
 {
-	pid_t	pid;
 	pid_t	*pid_array;
 	int		philo_number;
 	int		index;

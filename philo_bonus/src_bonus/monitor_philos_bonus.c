@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 16:29:44 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:42:07 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	*wait_philos(void *arg)
 
 	monitor = (t_monitor *)arg;
 	status = 0;
-	waitpid(monitor->pid, &status, 0);
+	waitpid(-1 , &status, 0);
 	if (WIFEXITED(status))
 	{
 		sem_wait(monitor->check_sem);
@@ -46,7 +46,7 @@ static void	*wait_philos(void *arg)
 			sem_wait(monitor->death_sem);
 			sem_post(monitor->check_sem);
 			kill_processes(monitor->philo_number,
-				monitor->pid_array, monitor->index);
+				monitor->pid_array, -1);
 			return (NULL);
 		}
 		sem_post(monitor->check_sem);
@@ -54,9 +54,8 @@ static void	*wait_philos(void *arg)
 	return (NULL);
 }
 
-static void	monitor_cpy(t_monitor *m, t_config *conf, pid_t pid, pid_t *array)
+static void	monitor_cpy(t_monitor *m, t_config *conf, pid_t *array)
 {
-	m->pid = pid;
 	m->pid_array = array;
 	m->print_sem = conf->print_sem;
 	m->meal_sem = conf->meal_sem;
@@ -86,25 +85,18 @@ static void	*meal_monitor(void *arg)
 
 void	monitor_philo(t_config *conf, pid_t philo_id[])
 {
-	t_monitor	monitor[MAX_PHILO];
-	pthread_t	threads[MAX_PHILO];
+	t_monitor	monitor;
+	pthread_t	m_thread;
 	pthread_t	meal_check;
-	int			index;
 
-	index = 0;
-	memset(&monitor, 0, MAX_PHILO * sizeof(t_monitor));
-	memset(&threads, 0, MAX_PHILO * sizeof(pthread_t));
+	memset(&monitor, 0, 1 * sizeof(t_monitor));
+	memset(&m_thread, 0, 1 * sizeof(pthread_t));
 	if (pthread_create(&meal_check, NULL, meal_monitor, conf) != 0)
 		return ;
 	pthread_detach(meal_check);
-	while (index < conf->philos_nb)
-	{
-		monitor_cpy(&monitor[index], conf, philo_id[index], philo_id);
-		monitor[index].index = index;
-		if (pthread_create(&threads[index], NULL,
-				wait_philos, &monitor[index]) != 0)
-			return (kill_processes(conf->philos_nb, philo_id, -1));
-		pthread_join(threads[index], NULL);
-		index++;
-	}
+	monitor_cpy(&monitor, conf, philo_id);
+	if (pthread_create(&m_thread, NULL,
+			wait_philos, &monitor) != 0)
+		return (kill_processes(conf->philos_nb, philo_id, -1));
+	pthread_join(m_thread, NULL);
 }
