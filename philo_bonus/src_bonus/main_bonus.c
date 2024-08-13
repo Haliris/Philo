@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 23:19:20 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 15:01:25 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int	main(int ac, char **av)
 	if (parse_args(&conf, ac, av) == PANIC)
 		return (EXIT_FAILURE);
 	init_config(&conf, av, ac);
+	if (conf.meals_nb == 0)
+		return (EXIT_SUCCESS);
 	if (open_semaphores(&conf) == PANIC)
 		return (EXIT_FAILURE);
 	if (add_philo(&conf, philo_ids, conf.philos_nb) == PANIC)

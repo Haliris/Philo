@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 16:00:17 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 14:51:04 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ int	main(int ac, char **av)
 	if (init_mutexes(conf.philos_nb, &conf) == PANIC)
 		return (EXIT_FAILURE);
 	init_config(&conf, av, ac);
+	if (conf.meals_nb == 0)
+		return (EXIT_SUCCESS);
 	if (add_philo(&conf, philo_id, conf.philos_nb, philo_structs) == PANIC)
 	{
 		destroy_mutexes(conf.philos_nb, &conf);
