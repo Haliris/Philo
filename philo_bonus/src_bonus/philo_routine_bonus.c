@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 18:53:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 00:21:38 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 14:22:35 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,6 @@ void	try_to_write(t_philo *philo, char *message)
 static void	exit_child(t_philo *philo, int code)
 {
 	philo->stop_program = TRUE;
-	usleep(2000);
-	// sem_close(philo->print_sem);
-	// sem_close(philo->check_sem);
-	// sem_close(philo->forks);
 	exit(code);
 }
 
