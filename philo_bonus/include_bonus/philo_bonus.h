@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:40:43 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 22:57:00 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 14:37:02 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,8 @@ void	monitor_philo(t_config *conf, pid_t philo_id[]);
 
 void	try_to_write(t_philo *philo, char *message);
 void	do_routine(t_philo *philo, sem_t *forks);
+void	exit_child(t_philo *philo, int code);
+void	*check_stop(void *arg);
+void	*check_tummy(void *arg);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sem_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 13:43:42 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 00:06:58 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 14:34:13 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,24 +76,15 @@ int	open_semaphores(t_config *conf)
 	conf->forks = sem_open("/forks", O_CREAT, 0644, conf->philos_nb);
 	if (conf->forks == SEM_FAILED)
 		status = FORK_ERR;
-	if (status == OK)
-	{
-		conf->print_sem = sem_open("/print", O_CREAT, 0644, 1);
-		if (conf->print_sem == SEM_FAILED)
-			status = PRINT_ERR;
-	}
-	if (status == OK)
-	{
-		conf->check_sem = sem_open("/check", O_CREAT, 0644, 1);
-		if (conf->check_sem == SEM_FAILED)
-			status = CHECK_ERR;
-	}
-	if (status == OK)
-	{
-		conf->meal_sem = sem_open("/meal", O_CREAT, 0644, 0);
-		if (conf->meal_sem == SEM_FAILED)
-			status = MEAL_ERR;
-	}
+	conf->print_sem = sem_open("/print", O_CREAT, 0644, 1);
+	if (conf->print_sem == SEM_FAILED)
+		status = PRINT_ERR;
+	conf->check_sem = sem_open("/check", O_CREAT, 0644, 1);
+	if (conf->check_sem == SEM_FAILED)
+		status = CHECK_ERR;
+	conf->meal_sem = sem_open("/meal", O_CREAT, 0644, 0);
+	if (conf->meal_sem == SEM_FAILED)
+		status = MEAL_ERR;
 	if (status != OK)
 	{
 		panic_close_sem(conf, status);

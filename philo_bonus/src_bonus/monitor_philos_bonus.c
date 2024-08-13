@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_philos_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/12 23:57:42 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 14:33:20 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	kill_processes(int philo_number, pid_t *pids, int ignore)
 		if (index == ignore)
 		{
 			index++;
-		 	continue ;
+			continue ;
 		}
 		kill(pids[index], SIGTERM);
 		index++;
@@ -40,7 +40,8 @@ static void	*wait_philos(void *arg)
 	if (WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == EXIT_DEATH)
-			kill_processes(monitor->philo_number, monitor->pid_array, monitor->index);
+			kill_processes(monitor->philo_number,
+				monitor->pid_array, monitor->index);
 	}
 	return (NULL);
 }
@@ -92,12 +93,7 @@ void	monitor_philo(t_config *conf, pid_t philo_id[])
 		monitor[index].index = index;
 		if (pthread_create(&threads[index], NULL,
 				wait_philos, &monitor[index]) != 0)
-			return ;
-		index++;
-	}
-	index = 0;
-	while (index < conf->philos_nb)
-	{
+			return (kill_processes(conf->philos_nb, philo_id, -1));
 		pthread_join(threads[index], NULL);
 		index++;
 	}
