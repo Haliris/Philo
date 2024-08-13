@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 13:43:42 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 15:14:21 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:50:59 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,15 @@
 
 static void	panic_close_sem(t_config *conf, t_sem_error err)
 {
-	if (err == PRINT_ERR)
+	sem_close(conf->forks);
+	sem_unlink("/forks");
+	if (err == CHECK_ERR)
 	{
-		sem_close(conf->forks);
-		sem_unlink("/forks");
-	}
-	else if (err == CHECK_ERR)
-	{
-		sem_close(conf->forks);
-		sem_unlink("/forks");
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
 	}
 	else if (err == MEAL_ERR)
 	{
-		sem_close(conf->forks);
-		sem_unlink("/forks");
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
 		sem_close(conf->check_sem);
@@ -37,8 +30,6 @@ static void	panic_close_sem(t_config *conf, t_sem_error err)
 	}
 	else if (err == DEATH_ERR)
 	{
-		sem_close(conf->forks);
-		sem_unlink("/forks");
 		sem_close(conf->print_sem);
 		sem_unlink("/print");
 		sem_close(conf->check_sem);

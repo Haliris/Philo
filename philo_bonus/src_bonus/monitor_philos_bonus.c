@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:03:19 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/13 16:42:07 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:50:11 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,12 @@ static void	*wait_philos(void *arg)
 
 	monitor = (t_monitor *)arg;
 	status = 0;
-	waitpid(-1 , &status, 0);
+	waitpid(-1, &status, 0);
 	if (WIFEXITED(status))
 	{
 		sem_wait(monitor->check_sem);
-		if (WEXITSTATUS(status) == EXIT_DEATH && *monitor->stop_simulation == FALSE)
+		if (WEXITSTATUS(status) == EXIT_DEATH
+			&& *monitor->stop_simulation == FALSE)
 		{
 			*monitor->stop_simulation = TRUE;
 			sem_wait(monitor->death_sem);
