@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/11 15:43:01 by marvin           ###   ########.fr       */
+/*   Created: 2024/08/12 17:40:43 by jteissie          #+#    #+#             */
+/*   Updated: 2024/08/13 16:40:47 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 # include <unistd.h>
 # include <pthread.h>
 # include <string.h>
@@ -42,21 +42,25 @@ typedef enum e_sem_error
 	OK,
 	FORK_ERR,
 	PRINT_ERR,
-	DEATH_ERR,
 	CHECK_ERR,
+	MEAL_ERR,
+	DEATH_ERR,
 }	t_sem_error;
 
 typedef struct s_monitor
 {
-	pid_t	pid;
+	pid_t	*pid_array;
+	int		philo_number;
+	int		index;
+	int		*stop_simulation;
 	sem_t	*print_sem;
+	sem_t	*check_sem;
+	sem_t	*meal_sem;
 	sem_t	*death_sem;
 }	t_monitor;
 
 typedef struct s_philo
 {
-	int				dead;
-	int				kill_switch;
 	int				full_tummy;
 	int				monitor_ignore;
 	long			start_time;
@@ -68,16 +72,20 @@ typedef struct s_philo
 	int				meals_nb;
 	int				meals_eaten;
 	int				think_time;
+	int				stop_program;
 	sem_t			*forks;
-	sem_t			*death_sem;
 	sem_t			*print_sem;
 	sem_t			*check_sem;
+	sem_t			*meal_sem;
+	sem_t			*death_sem;
 }	t_philo;
 
 typedef struct s_config
 {
+	pid_t			*pid_array;
 	int				death;
 	int				full_philos;
+	int				stop_simulation;
 	int				meals_nb;
 	int				philos_nb;
 	int				time_to_die;
@@ -86,9 +94,10 @@ typedef struct s_config
 	long			start_time;
 	pid_t			*philo_id;
 	sem_t			*forks;
-	sem_t			*death_sem;
 	sem_t			*print_sem;
 	sem_t			*check_sem;
+	sem_t			*meal_sem;
+	sem_t			*death_sem;
 }	t_config;
 
 void	print_log(char *str, int fd);
@@ -97,7 +106,6 @@ int		simple_atoi(const char *nptr);
 int		check_number(int ac, char **av);
 int		open_semaphores(t_config *conf);
 void	close_semaphores(t_config *conf);
-
 
 long	get_start_time(void);
 long	get_current_time(long start_time);
@@ -109,5 +117,8 @@ void	monitor_philo(t_config *conf, pid_t philo_id[]);
 
 void	try_to_write(t_philo *philo, char *message);
 void	do_routine(t_philo *philo, sem_t *forks);
+void	exit_child(t_philo *philo, int code);
+void	*check_stop(void *arg);
+void	*check_tummy(void *arg);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:03:50 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 11:27:36 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:54:42 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ int	check_stop(t_philo *philo)
 		pthread_mutex_unlock(philo->death_lock);
 		return (TRUE);
 	}
-	if (philo->meals_eaten == philo->meals_nb)
+	if (philo->meals_eaten == philo->meals_nb && philo->meal_ignore == FALSE)
 	{
 		philo->full_tummy = TRUE;
 		pthread_mutex_unlock(philo->death_lock);
-		return (TRUE);
+		return (FALSE);
 	}
 	pthread_mutex_unlock(philo->death_lock);
 	return (FALSE);

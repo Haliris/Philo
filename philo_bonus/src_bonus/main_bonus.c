@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:45:17 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 20:06:22 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 15:19:46 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static void	init_config(t_config *config, char **av, int ac)
 	config->time_to_sleep = simple_atoi(av[4]);
 	config->death = FALSE;
 	config->full_philos = FALSE;
+	config->stop_simulation = FALSE;
 	config->full_philos = 0;
 	if (ac == 6)
 		config->meals_nb = simple_atoi(av[5]);
@@ -48,20 +49,22 @@ static int	parse_args(t_config *config, int ac, char **av)
 
 int	main(int ac, char **av)
 {
-	t_config				conf;
-	pid_t					philo_ids[MAX_PHILO];
+	t_config	conf;
+	pid_t		philo_ids[MAX_PHILO];
 
 	if (parse_args(&conf, ac, av) == PANIC)
 		return (EXIT_FAILURE);
 	init_config(&conf, av, ac);
+	if (conf.meals_nb == 0)
+		return (EXIT_SUCCESS);
 	if (open_semaphores(&conf) == PANIC)
 		return (EXIT_FAILURE);
-	sem_wait(conf.death_sem);
 	if (add_philo(&conf, philo_ids, conf.philos_nb) == PANIC)
 	{
 		close_semaphores(&conf);
 		return (EXIT_FAILURE);
 	}
+	conf.pid_array = philo_ids;
 	monitor_philo(&conf, philo_ids);
 	close_semaphores(&conf);
 	return (EXIT_SUCCESS);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:12 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/08 22:22:02 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/12 15:28:32 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef struct s_philo
 {
 	int				*death;
 	int				full_tummy;
-	int				monitor_ignore;
+	int				meal_ignore;
 	long			start_time;
 	int				death_time;
 	int				number;
@@ -44,7 +44,6 @@ typedef struct s_philo
 	int				time_since_meal;
 	int				meals_nb;
 	int				meals_eaten;
-	int				*eating;
 	int				think_time;
 	int				left_fork;
 	int				right_fork;

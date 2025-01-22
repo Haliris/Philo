@@ -6,7 +6,7 @@
 /*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:13:23 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/09 13:03:01 by jteissie         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:28:40 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static void	copy_conf(t_config *conf, t_philo *philos, int philos_nb, int count)
 	philos->forks_state = conf->forks_state;
 	philos->meals_nb = conf->meals_nb;
 	philos->meals_eaten = 0;
-	philos->monitor_ignore = FALSE;
+	philos->meal_ignore = FALSE;
 }
 
 int	add_philo(t_config *conf, pthread_t id[], int nb, t_philo **philo)

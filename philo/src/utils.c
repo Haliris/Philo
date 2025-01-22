@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 13:52:48 by jteissie          #+#    #+#             */
-/*   Updated: 2024/08/07 19:29:19 by marvin           ###   ########.fr       */
+/*   Updated: 2024/08/13 15:02:23 by jteissie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	check_number(int ac, char **av)
 			{
 				print_log("Error parsing args ", STDERR_FILENO);
 				print_log(str, STDERR_FILENO);
-				print_log(" is not a number\n", STDERR_FILENO);
+				print_log(" is not a positive number\n", STDERR_FILENO);
 				return (PARSE_ERROR);
 			}
 			str_i++;

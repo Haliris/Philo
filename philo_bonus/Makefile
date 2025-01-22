@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
+#    By: jteissie <jteissie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 11:55:42 by jteissie          #+#    #+#              #
-#    Updated: 2024/08/11 13:08:05 by marvin           ###   ########.fr        #
+#    Updated: 2024/08/13 14:39:09 by jteissie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ SRC_FILES = main_bonus.c \
 			time_utils_bonus.c \
 			philo_routine_bonus.c \
 			philo_routine_handler.c \
+			philo_routine_threads.c \
 
 vpath %.c ./ src_bonus/
 
